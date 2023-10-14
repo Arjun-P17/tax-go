@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Arjun-P17/tax-go/internal/trades/service.go"
+	"github.com/Arjun-P17/tax-go/internal/trades/service"
 	"github.com/Arjun-P17/tax-go/pkg/configmap"
 	"github.com/Arjun-P17/tax-go/pkg/mongodb"
 	"github.com/Arjun-P17/tax-go/repository"
