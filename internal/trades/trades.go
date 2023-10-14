@@ -8,11 +8,14 @@ import (
 	"github.com/Arjun-P17/tax-go/internal/trades/service.go"
 	"github.com/Arjun-P17/tax-go/pkg/configmap"
 	"github.com/Arjun-P17/tax-go/pkg/mongodb"
+	"github.com/Arjun-P17/tax-go/repository"
 )
 
 const configPath = "config.yaml"
 
 func main() {
+	ctx := context.Background()
+
 	config, err := configmap.ReadConfigFile(configPath)
 	if err != nil {
 		log.Fatal(err)
@@ -22,15 +25,20 @@ func main() {
 	opts := mongodb.Options{
 		URI: mongoURI,
 	}
-	client, err := mongodb.NewClient(context.Background(), &opts)
+	client, err := mongodb.NewClient(ctx, &opts)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
+		if err = client.Disconnect(ctx); err != nil {
 			panic(err)
 		}
 	}()
+
+	connector, err := repository.NewConnector(client)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	transactions, err := service.ParseTransactions(config.Trades.CSVPath)
 	if err != nil {
@@ -39,5 +47,6 @@ func main() {
 
 	for _, transaction := range transactions {
 		fmt.Println(transaction.Ticker)
+		connector.InsertTransaction(ctx, *transaction)
 	}
 }

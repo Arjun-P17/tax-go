@@ -1,4 +1,4 @@
-package mongodb
+package repository
 
 import (
 	"errors"
@@ -6,16 +6,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Connetor struct {
+type Connector struct {
 	client *mongo.Client
 }
 
-func NewConnector(client *mongo.Client) (*Connetor, error) {
+func NewConnector(client *mongo.Client) (*Connector, error) {
 	if client == nil {
 		return nil, errors.New("mongodb client is nil")
 	}
 
-	return &Connetor{
+	return &Connector{
 		client: client,
 	}, nil
+}
+
+func (c *Connector) GetCollection(db string, collection string) *mongo.Collection {
+	client := c.client
+	col := client.Database(db).Collection(collection)
+
+	return col
 }
