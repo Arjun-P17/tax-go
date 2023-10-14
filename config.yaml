@@ -1,3 +1,5 @@
 database:
   host: "localhost"
   port: 27017
+trades:
+  csvpath: "./ibkr.csv"
