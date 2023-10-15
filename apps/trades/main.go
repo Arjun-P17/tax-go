@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Arjun-P17/tax-go/internal/tax/service"
+	"github.com/Arjun-P17/tax-go/apps/trades/service"
 	"github.com/Arjun-P17/tax-go/pkg/configmap"
 	"github.com/Arjun-P17/tax-go/pkg/mongodb"
 	"github.com/Arjun-P17/tax-go/repository"
@@ -38,6 +38,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	service := service.NewService(connector)
-	service.ProcessTrades(ctx)
+	transactions, err := service.ParseTransactions(config.Trades.CSVPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, transaction := range transactions {
+		fmt.Println(transaction.Ticker)
+		connector.InsertTransaction(ctx, *transaction)
+	}
 }

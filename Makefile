@@ -1,7 +1,7 @@
 .PHONY: trades
 trades:
-	go run internal/trades/main.go
+	go run apps/trades/main.go
 
 .PHONY: tax
 tax:
-	go run internal/tax/main.go
+	go run apps/tax/main.go
