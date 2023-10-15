@@ -8,32 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func (s *Service) processBuy(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction) {
-	buy := models.Buy{
-		Transaction:  transaction,
-		QuantityLeft: transaction.Quantity,
-	}
-	stockPosition.Buys = append(stockPosition.Buys, buy)
-}
-
-func (s *Service) processSell(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction, taxMethod models.TaxMethod) (*models.Sell, error) {
-	// Get these values by doing a tax algo
-	profit := 0.0
-	cgtProfit := 0.0
-	buys := make([]primitive.ObjectID, 0)
-
-	sell := &models.Sell{
-		Transaction: transaction,
-		TaxMethod:   taxMethod,
-		Profit:      profit,
-		CGTProfit:   cgtProfit,
-		Buys:        buys,
-	}
-	stockPosition.Sells = append(stockPosition.Sells, *sell)
-
-	return sell, nil
-}
-
 func (s *Service) ProcessTrades(ctx context.Context) error {
 	stocksTransactions, err := s.dbConnector.GetAllStockTransactions(ctx)
 	if err != nil {
@@ -81,4 +55,30 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (s *Service) processBuy(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction) {
+	buy := models.Buy{
+		Transaction:  transaction,
+		QuantityLeft: transaction.Quantity,
+	}
+	stockPosition.Buys = append(stockPosition.Buys, buy)
+}
+
+func (s *Service) processSell(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction, taxMethod models.TaxMethod) (*models.Sell, error) {
+	// Get these values by doing a tax algo
+	profit := 0.0
+	cgtProfit := 0.0
+	buys := make([]primitive.ObjectID, 0)
+
+	sell := &models.Sell{
+		Transaction: transaction,
+		TaxMethod:   taxMethod,
+		Profit:      profit,
+		CGTProfit:   cgtProfit,
+		Buys:        buys,
+	}
+	stockPosition.Sells = append(stockPosition.Sells, *sell)
+
+	return sell, nil
 }
