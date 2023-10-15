@@ -6,6 +6,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const (
+	dbName                 = "tax"
+	transactionsCollection = "transactions"
+	positionsCollection    = "positions"
+)
+
 type Connector struct {
 	client *mongo.Client
 }

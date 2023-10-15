@@ -3,6 +3,7 @@ module github.com/Arjun-P17/tax-go
 go 1.21.0
 
 require (
+	github.com/google/uuid v1.3.1
 	go.mongodb.org/mongo-driver v1.12.1
 	gopkg.in/yaml.v2 v2.4.0
 )

@@ -10,6 +10,7 @@ import (
 
 	"github.com/Arjun-P17/tax-go/models"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
@@ -119,6 +120,7 @@ func parseTransaction(row []string) (*models.Transaction, error) {
 	quantity, tradePrice, realPrice = quantity*splitFactor, tradePrice/splitFactor, realPrice/tradePrice
 
 	return &models.Transaction{
+		ID:           primitive.NewObjectID(),
 		Ticker:       ticker,
 		Currency:     currency,
 		Date:         date,
@@ -141,8 +143,8 @@ var splitFactors = map[string]struct {
 }{
 	"AMZN": {"2022-06-06, 00:00:00", 20.0},
 	"SHOP": {"2022-06-29, 00:00:00", 10.0},
-	"TSLA": {"2022-08-25, 00:00:00", 20.0},
-	"PANW": {"2022-09-14, 00:00:00", 20.0},
+	"TSLA": {"2022-08-25, 00:00:00", 3.0},
+	"PANW": {"2022-09-14, 00:00:00", 3.0},
 }
 
 // getSplitfactor returns the splitfactor for a stock split, if transaction date is before splitdate so we can normalise the transaction values relative to post split

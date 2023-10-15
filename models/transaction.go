@@ -2,13 +2,9 @@ package models
 
 import (
 	"time"
-)
 
-// StockTransactions represents stock transactions.
-type StockTransactions struct {
-	Ticker       string
-	Transactions []Transaction
-}
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type TransactionType string
 
@@ -30,7 +26,7 @@ var (
 // Transaction represents the transaction object parsed from the broker.
 // It is the base type for Buy and Sell and all numbers are positive
 type Transaction struct {
-	ID           string
+	ID           primitive.ObjectID
 	Ticker       string
 	Currency     string
 	Date         time.Time
@@ -52,30 +48,20 @@ type Sell struct {
 	TaxMethod TaxMethod
 	Profit    float64
 	CGTProfit float64
-	BuyEvents []BuyEvent
-}
-
-// BuyEvent represents a buy that all or part of the sell corresponds to
-type BuyEvent struct {
-	BuyID     string
-	Quantity  float64
-	RealPrice float64
-	Date      time.Time
+	// List of buyIDs that the sell corresponds to
+	Buys []primitive.ObjectID
 }
 
 // Buy represents a buy transaction.
 type Buy struct {
 	Transaction
 	QuantityLeft float64
-	SellEvents   []SellEvent
 }
 
-// SellEvent represents a sell that all or part of the buy corresponds to
-type SellEvent struct {
-	SellID    string
-	Quantity  float64
-	RealPrice float64
-	Date      time.Time
+// StockTransactions represents the transactions for a ticker.
+type StockTransactions struct {
+	Ticker       string
+	Transactions []Transaction
 }
 
 // StockPosition represents a portfolio position.
@@ -87,4 +73,20 @@ type StockPosition struct {
 	CGTProfit  float64
 	Buys       []Buy
 	Sells      []Sell
+}
+
+func (b Buy) GetDate() time.Time {
+	return b.Date
+}
+
+func (b Buy) GetBasis() float64 {
+	return b.Basis
+}
+
+func (s Sell) GetDate() time.Time {
+	return s.Date
+}
+
+func (s Sell) GetBasis() float64 {
+	return s.Basis
 }

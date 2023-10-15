@@ -8,8 +8,25 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]models.StockTransactions, error) {
+	collection := c.GetCollection(dbName, transactionsCollection)
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var stockTransactions []models.StockTransactions
+	if err = cursor.All(ctx, &stockTransactions); err != nil {
+		return nil, err
+	}
+
+	return stockTransactions, nil
+}
+
 func (c *Connector) upsertStockTransaction(ctx context.Context, filter bson.M, update bson.M) error {
-	collection := c.GetCollection("tax", "transactions")
+	collection := c.GetCollection(dbName, transactionsCollection)
 
 	options := options.Update().SetUpsert(true)
 	_, err := collection.UpdateOne(ctx, filter, update, options)
@@ -17,10 +34,11 @@ func (c *Connector) upsertStockTransaction(ctx context.Context, filter bson.M, u
 }
 
 func (c *Connector) InsertTransaction(ctx context.Context, transaction models.Transaction) error {
-	filter := bson.M{"ticker": transaction.Ticker}
+	collection := c.GetCollection(dbName, transactionsCollection)
 
 	// Check if the document exists.
-	count, err := c.client.Database("tax").Collection("transactions").CountDocuments(ctx, filter)
+	filter := bson.M{"ticker": transaction.Ticker}
+	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		return err
 	}

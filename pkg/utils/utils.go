@@ -1,6 +1,9 @@
 package utils
 
-import "time"
+import (
+	"math"
+	"time"
+)
 
 func StringToTime(dateString string) (time.Time, error) {
 	dateFormat := "2006-01-02, 15:04:05"
@@ -20,4 +23,8 @@ func GetMappedTicker(ticker string) string {
 	}
 
 	return mappedTicker
+}
+
+func RoundToTwoDecimalPlaces(num float64) float64 {
+	return math.Round(num*100) / 100
 }

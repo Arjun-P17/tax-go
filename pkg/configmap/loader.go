@@ -6,6 +6,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const ConfigPath = "config.yaml"
+
 func ReadConfigFile(filePath string) (Config, error) {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
