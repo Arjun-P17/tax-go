@@ -6,6 +6,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// TODO: move this to config
 const (
 	dbName                 = "tax"
 	transactionsCollection = "transactions"
