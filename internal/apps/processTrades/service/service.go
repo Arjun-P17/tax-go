@@ -1,6 +1,6 @@
 package service
 
-import "github.com/Arjun-P17/tax-go/repository"
+import "github.com/Arjun-P17/tax-go/internal/repository"
 
 type Service struct {
 	dbConnector *repository.Connector

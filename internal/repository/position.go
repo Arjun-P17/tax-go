@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/Arjun-P17/tax-go/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/Arjun-P17/tax-go/internal/models"
 )
 
 func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string) (*models.StockPosition, error) {

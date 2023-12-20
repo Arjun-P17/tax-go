@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/Arjun-P17/tax-go/models"
+	"github.com/Arjun-P17/tax-go/internal/models"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
 

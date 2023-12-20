@@ -3,7 +3,7 @@ package utils
 import (
 	"time"
 
-	"github.com/Arjun-P17/tax-go/models"
+	"github.com/Arjun-P17/tax-go/internal/models"
 )
 
 type Transaction interface {

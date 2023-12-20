@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Arjun-P17/tax-go/models"
-	"github.com/Arjun-P17/tax-go/pkg/utils"
+	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/utils"
+	pkgutils "github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
 func (s *Service) ProcessTrades(ctx context.Context) error {
@@ -47,7 +48,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 		}
 
 		// Sometimes complete buy and sells dont fully add up to 0
-		stockPosition.Quantity = utils.RoundToTwoDecimalPlaces(stockPosition.Quantity)
+		stockPosition.Quantity = pkgutils.RoundToTwoDecimalPlaces(stockPosition.Quantity)
 
 		if err := s.dbConnector.UpsertStockPosition(ctx, ticker, *stockPosition); err != nil {
 			return err
