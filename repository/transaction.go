@@ -55,7 +55,7 @@ func (c *Connector) InsertTransaction(ctx context.Context, transaction models.Tr
 
 	// If the document exists, push the new transaction into the array.
 	update := bson.M{
-		"$push": bson.M{"transactions": transaction},
+		"$addToSet": bson.M{"transactions": transaction},
 	}
 
 	return c.upsertStockTransaction(ctx, filter, update)

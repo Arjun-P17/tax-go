@@ -28,3 +28,7 @@ func GetMappedTicker(ticker string) string {
 func RoundToTwoDecimalPlaces(num float64) float64 {
 	return math.Round(num*100) / 100
 }
+
+func IsOneYearGreaterThan(date1, date2 time.Time) bool {
+	return date1.AddDate(1, 0, 0).Before(date2)
+}

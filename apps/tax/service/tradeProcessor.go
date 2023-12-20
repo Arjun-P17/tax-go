@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Arjun-P17/tax-go/models"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (s *Service) ProcessTrades(ctx context.Context) error {
@@ -29,20 +29,20 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 
 			if transaction.Type == models.Buytype {
 				stockPosition.Quantity += transaction.Quantity
-				stockPosition.NetSpend += transaction.Basis
-				s.processBuy(ctx, stockPosition, transaction)
+				stockPosition.NetSpend += transaction.Proceeds
+				processBuy(ctx, stockPosition, transaction)
 			} else {
 				stockPosition.Quantity -= transaction.Quantity
-				stockPosition.SoldProfit -= transaction.Basis
+				stockPosition.NetSpend -= transaction.Proceeds
 				taxMethod := models.FIFO
-				sell, err := s.processSell(ctx, stockPosition, transaction, taxMethod)
+				sell, err := processSell(ctx, stockPosition, transaction, taxMethod)
 				if err != nil {
 					return err
 				}
 				stockPosition.SoldProfit += sell.Profit
 				stockPosition.CGTProfit += sell.CGTProfit
 
-				// Insert tax event
+				// TODO: Insert tax event
 			}
 		}
 
@@ -57,7 +57,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 	return nil
 }
 
-func (s *Service) processBuy(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction) {
+func processBuy(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction) {
 	buy := models.Buy{
 		Transaction:  transaction,
 		QuantityLeft: transaction.Quantity,
@@ -65,18 +65,18 @@ func (s *Service) processBuy(ctx context.Context, stockPosition *models.StockPos
 	stockPosition.Buys = append(stockPosition.Buys, buy)
 }
 
-func (s *Service) processSell(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction, taxMethod models.TaxMethod) (*models.Sell, error) {
-	// Get these values by doing a tax algo
-	profit := 0.0
-	cgtProfit := 0.0
-	buys := make([]primitive.ObjectID, 0)
+func processSell(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction, taxMethod models.TaxMethod) (*models.Sell, error) {
+	// TODO: Use the right algo using taxMethod
+	taxProfit := fifo(ctx, transaction, &stockPosition.Buys)
+
+	fmt.Println(taxProfit)
 
 	sell := &models.Sell{
 		Transaction: transaction,
 		TaxMethod:   taxMethod,
-		Profit:      profit,
-		CGTProfit:   cgtProfit,
-		Buys:        buys,
+		Profit:      taxProfit.Profit,
+		CGTProfit:   taxProfit.CGTProfit,
+		BuysSold:    taxProfit.BuysSold,
 	}
 	stockPosition.Sells = append(stockPosition.Sells, *sell)
 

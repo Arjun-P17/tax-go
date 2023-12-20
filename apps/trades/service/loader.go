@@ -10,7 +10,6 @@ import (
 
 	"github.com/Arjun-P17/tax-go/models"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
@@ -45,7 +44,7 @@ func ParseTransactions(csvFilePath string) ([]*models.Transaction, error) {
 	return transactions, nil
 }
 
-// parseTransaction parses a CSV row and creates a Transaction object.
+// parseTransaction parses a CSV row and creates a Transaction object. Prices are adjusted to reflect current stock splits
 func parseTransaction(row []string) (*models.Transaction, error) {
 	if len(row) < 4 {
 		fmt.Println("transaction not in correct format continuing")
@@ -97,19 +96,21 @@ func parseTransaction(row []string) (*models.Transaction, error) {
 		return nil, err
 	}
 
+	// Include broker fees in the proceeds of trade
 	typ := models.Buytype
 	if quantity < 0 {
 		typ = models.Selltype
 		quantity *= -1
 		basis *= -1
-		brokerProfit *= -1
+		proceeds -= brokerageFee
 	} else {
 		proceeds *= -1
+		proceeds += brokerageFee
 	}
 
-	// Include broker fees in the proceeds of trade
-	proceeds += brokerageFee
 	realPrice := proceeds / quantity
+
+	fmt.Println(proceeds, quantity, realPrice)
 
 	// Handle stock splits
 	splitFactor, err := getSplitFactor(ticker, date)
@@ -117,10 +118,11 @@ func parseTransaction(row []string) (*models.Transaction, error) {
 		fmt.Println(ticker, err)
 		return nil, err
 	}
-	quantity, tradePrice, realPrice = quantity*splitFactor, tradePrice/splitFactor, realPrice/tradePrice
+	quantity, tradePrice, realPrice = quantity*splitFactor, tradePrice/splitFactor, realPrice/splitFactor
 
+	id := fmt.Sprintf("%s_%s_%v_%v", date.Format("2006-01-02:15:04:05"), ticker, quantity, proceeds)
 	return &models.Transaction{
-		ID:           primitive.NewObjectID(),
+		ID:           id,
 		Ticker:       ticker,
 		Currency:     currency,
 		Date:         date,

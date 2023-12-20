@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TransactionType string
@@ -24,9 +22,10 @@ var (
 )
 
 // Transaction represents the transaction object parsed from the broker.
-// It is the base type for Buy and Sell and all numbers are positive
+// It is the base type for Buy and Sell and all numbers are positive.
+// Relevant values are adjust to accomodate stock splits
 type Transaction struct {
-	ID           primitive.ObjectID
+	ID           string
 	Ticker       string
 	Currency     string
 	Date         time.Time
@@ -48,8 +47,14 @@ type Sell struct {
 	TaxMethod TaxMethod
 	Profit    float64
 	CGTProfit float64
-	// List of buyIDs that the sell corresponds to
-	Buys []primitive.ObjectID
+	// List of buys (can be partial) that the sell corresponds to
+	BuysSold []BuySold
+}
+
+// BuySold represents a buy transaction on each sell
+type BuySold struct {
+	BuyID    string
+	Quantity float64
 }
 
 // Buy represents a buy transaction.
