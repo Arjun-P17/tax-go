@@ -6,6 +6,7 @@ Please note that this project is currently in development, and efforts are under
 - Only compatible with files formatted according to Interactive Brokers (IBKR).
 - Only utilizes a FIFO algorithm for determining which buy allotments to sell.
 - Currently, the calculation is done in USD.
+- No testing
 
 ### Usage
 - Ensure your local MongoDB server is running and the port is correctly defined in `config.yaml`.
