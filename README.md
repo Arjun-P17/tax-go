@@ -9,9 +9,10 @@ Please note that this project is currently in development, and efforts are under
 - No testing
 
 ### Usage
+
 - Ensure your local MongoDB server is running and the port is correctly defined in `config.yaml`.
 - Place your IBKR-formatted trade files in the `csvpath` defined in `config.yaml`
 
-- Running is a two step process
+Running is a two step process
 - run `make parseTrades` to parse the trades into the db
 - run  `make processTrades` to process the trades and calculate tax info
