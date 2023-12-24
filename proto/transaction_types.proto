@@ -1,0 +1,64 @@
+syntax = "proto3";
+package transaction;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "go/transactionpb";
+
+message StockPosition {
+    string ticker = 1;
+    string quantity = 2;
+    double net_spend = 3;
+    double sold_profit = 4;
+    double cgt_profit = 5;
+    repeated Buy buys = 6;
+    repeated Sell sells = 7;
+}
+
+message Buy {
+    Transaction transaction = 1;
+    double quantity_left = 2;
+}
+
+message Sell {
+    Transaction transaction = 1;
+    TaxMethod tax_method = 2;
+    double profit = 3;
+    double cgt_profit = 4;
+    repeated BuySold buys_sold = 5;
+}
+
+enum TaxMethod {
+    FIFO = 0;
+    LIFO = 1;
+    MAX_LOSS = 2;
+    MIN_GAIN = 3;
+    MIN_CGT = 4;
+}
+
+message BuySold {
+    string Buy_id = 1;
+    double quantity = 2;
+}
+
+message Transaction {
+    string id = 1;
+    string ticker = 2;
+    string currency = 3;
+    google.protobuf.Timestamp date = 4;
+    TransactionType type = 5;
+    double quantity = 6;
+    double trade_price = 7;
+    double real_price = 8;
+    double proceeds = 9;
+    double brokerage_fee = 10;
+    double basis = 11;
+    double broker_profit = 12;
+    double usd_aud = 13;
+    double split_factor = 14;
+}
+
+enum TransactionType {
+    BUY = 0;
+    SELL = 1;
+}
