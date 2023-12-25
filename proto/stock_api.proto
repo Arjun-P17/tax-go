@@ -1,0 +1,16 @@
+syntax = "proto3";
+package stock;
+
+import "stock_types.proto";
+
+option go_package = "go/stockpb";
+
+service StockService {
+    rpc GetStockPositions(StockRequest) returns (StockPositions) {}
+}
+
+message StockRequest {}
+
+message StockPositions {
+    repeated StockPosition positions = 1;
+}

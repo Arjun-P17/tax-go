@@ -1,9 +1,9 @@
 syntax = "proto3";
-package transaction;
+package stock;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "go/transactionpb";
+option go_package = "go/stockpb";
 
 message StockPosition {
     string ticker = 1;
