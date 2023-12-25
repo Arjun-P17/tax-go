@@ -7,7 +7,7 @@ option go_package = "go/stockpb";
 
 message StockPosition {
     string ticker = 1;
-    string quantity = 2;
+    double quantity = 2;
     double net_spend = 3;
     double sold_profit = 4;
     double cgt_profit = 5;
@@ -62,3 +62,26 @@ enum TransactionType {
     BUY = 0;
     SELL = 1;
 }
+
+message TaxEvent {
+    google.protobuf.Timestamp date = 1;
+    string ticker = 2;
+    double profit = 3;
+    double profit_aud = 4;
+    double cgt_profit = 5;
+    double cgt_profit_aud = 6;
+  }
+  
+  message StockTax {
+    string ticker = 1;
+    double net_profit_cgt = 2;
+    double net_profit_cgt_aud = 3;
+    double net_profit = 4;
+    double net_profit_aud = 5;
+    double gains_cgt = 6;
+    double gains_cgt_aud = 7;
+    double gains = 8;
+    double losses = 9;
+    repeated TaxEvent events = 10;
+  }
+  

@@ -1,14 +1,20 @@
+// Contains all the repository models
+
 package repository
 
 import (
 	"time"
 )
 
+/*
+	Transaction Models
+*/
+
 type TransactionType string
 
 var (
-	Buytype  TransactionType = "Buy"
-	Selltype TransactionType = "Sell"
+	Buytype  TransactionType = "BUY"
+	Selltype TransactionType = "SELL"
 )
 
 type TaxMethod string
@@ -16,9 +22,9 @@ type TaxMethod string
 var (
 	FIFO    TaxMethod = "FIFO"
 	LIFO    TaxMethod = "LIFO"
-	MaxLoss TaxMethod = "MaxLoss"
-	MinGain TaxMethod = "MinGain"
-	MinCGT  TaxMethod = "MinCGT"
+	MaxLoss TaxMethod = "MAX_LOSS"
+	MinGain TaxMethod = "MIN_GAIN"
+	MinCGT  TaxMethod = "MIN_CGT"
 )
 
 // Transaction represents the transaction object parsed from the broker.
@@ -51,6 +57,14 @@ type Sell struct {
 	BuysSold []BuySold
 }
 
+func (s Sell) GetDate() time.Time {
+	return s.Date
+}
+
+func (s Sell) GetBasis() float64 {
+	return s.Basis
+}
+
 // BuySold represents a buy transaction on each sell
 type BuySold struct {
 	BuyID    string
@@ -63,11 +77,23 @@ type Buy struct {
 	QuantityLeft float64
 }
 
+func (b Buy) GetDate() time.Time {
+	return b.Date
+}
+
+func (b Buy) GetBasis() float64 {
+	return b.Basis
+}
+
 // StockTransactions represents the transactions for a ticker.
 type StockTransactions struct {
 	Ticker       string
 	Transactions []Transaction
 }
+
+/*
+	Portfolio Models
+*/
 
 // StockPosition represents a portfolio position.
 type StockPosition struct {
@@ -80,21 +106,9 @@ type StockPosition struct {
 	Sells      []Sell
 }
 
-func (b Buy) GetDate() time.Time {
-	return b.Date
-}
-
-func (b Buy) GetBasis() float64 {
-	return b.Basis
-}
-
-func (s Sell) GetDate() time.Time {
-	return s.Date
-}
-
-func (s Sell) GetBasis() float64 {
-	return s.Basis
-}
+/*
+	Tax Models
+*/
 
 // TaxEvent represents a tax event.
 type TaxEvent struct {
