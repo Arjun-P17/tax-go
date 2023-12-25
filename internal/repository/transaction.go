@@ -5,11 +5,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/Arjun-P17/tax-go/internal/models"
 )
 
-func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]models.StockTransactions, error) {
+func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]StockTransactions, error) {
 	collection := c.GetCollection(dbName, transactionsCollection)
 
 	cursor, err := collection.Find(ctx, bson.M{})
@@ -18,7 +16,7 @@ func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]models.Stock
 	}
 	defer cursor.Close(ctx)
 
-	var stockTransactions []models.StockTransactions
+	var stockTransactions []StockTransactions
 	if err = cursor.All(ctx, &stockTransactions); err != nil {
 		return nil, err
 	}
@@ -34,7 +32,7 @@ func (c *Connector) upsertStockTransaction(ctx context.Context, filter bson.M, u
 	return err
 }
 
-func (c *Connector) InsertTransaction(ctx context.Context, transaction models.Transaction) error {
+func (c *Connector) InsertTransaction(ctx context.Context, transaction Transaction) error {
 	collection := c.GetCollection(dbName, transactionsCollection)
 
 	// Check if the document exists.
@@ -45,9 +43,9 @@ func (c *Connector) InsertTransaction(ctx context.Context, transaction models.Tr
 	}
 
 	if count == 0 {
-		newStockTransaction := models.StockTransactions{
+		newStockTransaction := StockTransactions{
 			Ticker:       transaction.Ticker,
-			Transactions: []models.Transaction{transaction},
+			Transactions: []Transaction{transaction},
 		}
 
 		// Insert the new document.

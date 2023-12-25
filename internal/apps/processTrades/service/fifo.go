@@ -3,20 +3,20 @@ package service
 import (
 	"context"
 
-	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
 type FifoOutput struct {
 	Profit    float64
 	CGTProfit float64
-	BuysSold  []models.BuySold
+	BuysSold  []repository.BuySold
 }
 
 // Calculate the profit on the trade using fifo
-func fifo(ctx context.Context, sell models.Transaction, buys *[]models.Buy) FifoOutput {
+func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.Buy) FifoOutput {
 	profit, cgtProfit := 0.0, 0.0
-	buysSold := []models.BuySold{}
+	buysSold := []repository.BuySold{}
 
 	sellQ := sell.Quantity
 	sellPrice := sell.RealPrice
@@ -37,7 +37,7 @@ func fifo(ctx context.Context, sell models.Transaction, buys *[]models.Buy) Fifo
 			tradeProfit = buyQ * (sellPrice - buyPrice)
 			sellQ -= buyQ
 
-			buysSold = append(buysSold, models.BuySold{
+			buysSold = append(buysSold, repository.BuySold{
 				BuyID:    buy.ID,
 				Quantity: buyQ,
 			})

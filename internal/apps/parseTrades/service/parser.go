@@ -8,13 +8,13 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
-func ParseTransactions(csvFilePath string) ([]*models.Transaction, error) {
-	transactions := make([]*models.Transaction, 0)
+func ParseTransactions(csvFilePath string) ([]*repository.Transaction, error) {
+	transactions := make([]*repository.Transaction, 0)
 
 	file, err := os.Open(csvFilePath)
 	if err != nil {
@@ -45,7 +45,7 @@ func ParseTransactions(csvFilePath string) ([]*models.Transaction, error) {
 }
 
 // parseTransaction parses a CSV row and creates a Transaction object. Prices are adjusted to reflect current stock splits
-func parseTransaction(row []string) (*models.Transaction, error) {
+func parseTransaction(row []string) (*repository.Transaction, error) {
 	if len(row) < 4 {
 		fmt.Println("transaction not in correct format continuing")
 		return nil, nil
@@ -97,9 +97,9 @@ func parseTransaction(row []string) (*models.Transaction, error) {
 	}
 
 	// Include broker fees in the proceeds of trade
-	typ := models.Buytype
+	typ := repository.Buytype
 	if quantity < 0 {
-		typ = models.Selltype
+		typ = repository.Selltype
 		quantity *= -1
 		basis *= -1
 		proceeds -= brokerageFee
@@ -121,7 +121,7 @@ func parseTransaction(row []string) (*models.Transaction, error) {
 	quantity, tradePrice, realPrice = quantity*splitFactor, tradePrice/splitFactor, realPrice/splitFactor
 
 	id := fmt.Sprintf("%s_%s_%v_%v", date.Format("2006-01-02:15:04:05"), ticker, quantity, proceeds)
-	return &models.Transaction{
+	return &repository.Transaction{
 		ID:           id,
 		Ticker:       ticker,
 		Currency:     currency,

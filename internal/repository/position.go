@@ -8,18 +8,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/Arjun-P17/tax-go/internal/models"
 )
 
-func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string) (*models.StockPosition, error) {
+func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
 	collection := c.GetCollection(dbName, positionsCollection)
 
 	filter := bson.M{"_id": ticker}
-	stockPosition := &models.StockPosition{}
+	stockPosition := &StockPosition{}
 	err := collection.FindOne(ctx, filter).Decode(stockPosition)
 	if err == mongo.ErrNoDocuments {
-		return &models.StockPosition{Ticker: ticker}, nil
+		return &StockPosition{Ticker: ticker}, nil
 	} else if err != nil {
 		return nil, err
 	}
@@ -27,7 +25,7 @@ func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string
 	return stockPosition, nil
 }
 
-func (c *Connector) UpsertStockPosition(ctx context.Context, ticker string, stockPosition models.StockPosition) error {
+func (c *Connector) UpsertStockPosition(ctx context.Context, ticker string, stockPosition StockPosition) error {
 	collection := c.GetCollection(dbName, positionsCollection)
 
 	filter := bson.M{"ticker": ticker}

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/internal/utils"
 	pkgutils "github.com/Arjun-P17/tax-go/pkg/utils"
 )
@@ -28,14 +28,14 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 				continue
 			}
 
-			if transaction.Type == models.Buytype {
+			if transaction.Type == repository.Buytype {
 				stockPosition.Quantity += transaction.Quantity
 				stockPosition.NetSpend += transaction.Proceeds
 				processBuy(ctx, stockPosition, transaction)
 			} else {
 				stockPosition.Quantity -= transaction.Quantity
 				stockPosition.NetSpend -= transaction.Proceeds
-				taxMethod := models.FIFO
+				taxMethod := repository.FIFO
 				sell, err := processSell(ctx, stockPosition, transaction, taxMethod)
 				if err != nil {
 					return err
@@ -58,21 +58,21 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 	return nil
 }
 
-func processBuy(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction) {
-	buy := models.Buy{
+func processBuy(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction) {
+	buy := repository.Buy{
 		Transaction:  transaction,
 		QuantityLeft: transaction.Quantity,
 	}
 	stockPosition.Buys = append(stockPosition.Buys, buy)
 }
 
-func processSell(ctx context.Context, stockPosition *models.StockPosition, transaction models.Transaction, taxMethod models.TaxMethod) (*models.Sell, error) {
+func processSell(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) (*repository.Sell, error) {
 	// TODO: Use the right algo using taxMethod
 	taxProfit := fifo(ctx, transaction, &stockPosition.Buys)
 
 	fmt.Println(taxProfit)
 
-	sell := &models.Sell{
+	sell := &repository.Sell{
 		Transaction: transaction,
 		TaxMethod:   taxMethod,
 		Profit:      taxProfit.Profit,
