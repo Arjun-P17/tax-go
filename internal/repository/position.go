@@ -10,6 +10,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func (c *Connector) GetAllStockPositions(ctx context.Context) ([]StockPosition, error) {
+	collection := c.GetCollection(dbName, positionsCollection)
+
+	cursor, err := collection.Find(ctx, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var stockPositions []StockPosition
+	if err = cursor.All(ctx, &stockPositions); err != nil {
+		return nil, err
+	}
+
+	return stockPositions, nil
+}
+
 func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
 	collection := c.GetCollection(dbName, positionsCollection)
 
