@@ -2,17 +2,12 @@ package api
 
 import (
 	"context"
-	"errors"
 
-	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/service"
 	"github.com/Arjun-P17/tax-go/proto/go/stockpb"
 )
 
-type ServiceInterface interface {
-	GetStockPositions(ctx context.Context) ([]models.StockPosition, error)
-}
-
-type ApiInterface interface {
+type apiInterface interface {
 	GetStockPositions(ctx context.Context, req *stockpb.StockRequest) (*stockpb.StockPositions, error)
 }
 
@@ -23,16 +18,12 @@ type ForwardCompatibleApiLayer struct {
 
 type Api struct {
 	ForwardCompatibleApiLayer
-	ApiInterface
-	service ServiceInterface
+	apiInterface
+	service service.Service
 }
 
-func NewApi(service ServiceInterface) (Api, error) {
-	if service == nil {
-		return Api{}, errors.New("service is nil")
-	}
-
+func NewApi(s service.Service) (Api, error) {
 	return Api{
-		service: service,
+		service: s,
 	}, nil
 }

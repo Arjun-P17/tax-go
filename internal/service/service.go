@@ -1,16 +1,32 @@
 package service
 
-import "github.com/Arjun-P17/tax-go/internal/repository"
+import (
+	"context"
 
-// TODO: should we define service interface here?
-// TODO: should the db connector be an interface?
+	"github.com/Arjun-P17/tax-go/internal/models"
+	"github.com/Arjun-P17/tax-go/internal/repository"
+)
 
-type Service struct {
-	DBConnector *repository.Connector
+type databaseInterface interface {
+	GetAllStockPositions(ctx context.Context) ([]repository.StockPosition, error)
 }
 
-func NewService(dbConnector repository.Connector) Service {
-	return Service{
-		DBConnector: &dbConnector,
+type serviceInterface interface {
+	GetStockPositions(ctx context.Context) ([]models.StockPosition, error)
+}
+
+type Service struct {
+	serviceInterface
+	// database is an interface so service layer is decoupled from the database layer.
+	database databaseInterface
+}
+
+func NewService(db databaseInterface) (Service, error) {
+	if db == nil {
+		return Service{}, nil
 	}
+
+	return Service{
+		database: db,
+	}, nil
 }
