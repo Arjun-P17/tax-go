@@ -1,7 +1,7 @@
 .PHONY: parseTrades
 parseTrades:
-	go run internal/apps/parseTrades/main.go
+	go run internal/app/parseTrades/main.go
 
 .PHONY: processTrades
 processTrades:
-	go run internal/apps/processTrades/main.go
+	go run internal/app/processTrades/main.go
