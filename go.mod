@@ -1,6 +1,6 @@
 module github.com/Arjun-P17/tax-go
 
-go 1.21.0
+go 1.20
 
 require (
 	go.mongodb.org/mongo-driver v1.12.1
