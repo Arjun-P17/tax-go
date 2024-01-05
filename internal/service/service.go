@@ -7,26 +7,26 @@ import (
 	"github.com/Arjun-P17/tax-go/internal/repository"
 )
 
-type databaseInterface interface {
-	GetAllStockPositions(ctx context.Context) ([]repository.StockPosition, error)
-}
-
 type serviceInterface interface {
 	GetStockPositions(ctx context.Context) ([]models.StockPosition, error)
 }
 
-type Service struct {
-	serviceInterface
-	// database is an interface so service layer is decoupled from the database layer.
-	database databaseInterface
+type repositoryInterface interface {
+	GetAllStockPositions(ctx context.Context) ([]repository.StockPosition, error)
 }
 
-func NewService(db databaseInterface) (Service, error) {
-	if db == nil {
+type Service struct {
+	serviceInterface
+	// repository is an interface so service layer is decoupled from the repository layer.
+	repository repositoryInterface
+}
+
+func NewService(repo repositoryInterface) (Service, error) {
+	if repo == nil {
 		return Service{}, nil
 	}
 
 	return Service{
-		database: db,
+		repository: repo,
 	}, nil
 }

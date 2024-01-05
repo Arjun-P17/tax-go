@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (c *Connector) GetAllStockPositions(ctx context.Context) ([]StockPosition, error) {
+func (c *Repository) GetAllStockPositions(ctx context.Context) ([]StockPosition, error) {
 	collection := c.GetCollection(dbName, positionsCollection)
 
 	cursor, err := collection.Find(ctx, bson.M{})
@@ -27,7 +27,7 @@ func (c *Connector) GetAllStockPositions(ctx context.Context) ([]StockPosition, 
 	return stockPositions, nil
 }
 
-func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
+func (c *Repository) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
 	collection := c.GetCollection(dbName, positionsCollection)
 
 	filter := bson.M{"_id": ticker}
@@ -42,7 +42,7 @@ func (c *Connector) GetStockPositionOrDefault(ctx context.Context, ticker string
 	return stockPosition, nil
 }
 
-func (c *Connector) UpsertStockPosition(ctx context.Context, ticker string, stockPosition StockPosition) error {
+func (c *Repository) UpsertStockPosition(ctx context.Context, ticker string, stockPosition StockPosition) error {
 	collection := c.GetCollection(dbName, positionsCollection)
 
 	filter := bson.M{"ticker": ticker}

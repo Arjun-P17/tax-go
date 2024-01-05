@@ -38,12 +38,12 @@ func main() {
 		}
 	}()
 
-	db, err := repository.NewConnector(client)
+	repo, err := repository.NewRepository(client)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	service, err := service.NewService(db)
+	service, err := service.NewService(repo)
 
 	api, err := api.NewApi(service)
 
@@ -58,5 +58,4 @@ func main() {
 	stockpb.RegisterStockServiceServer(grpcServer, api)
 
 	grpcServer.Serve(lis)
-
 }

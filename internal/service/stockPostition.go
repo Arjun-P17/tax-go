@@ -7,7 +7,7 @@ import (
 )
 
 func (s Service) GetStockPositions(ctx context.Context) ([]models.StockPosition, error) {
-	stockPositions, err := s.database.GetAllStockPositions(ctx)
+	stockPositions, err := s.repository.GetAllStockPositions(ctx)
 	if err != nil {
 		return nil, err
 	}

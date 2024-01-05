@@ -33,7 +33,7 @@ func main() {
 		}
 	}()
 
-	connector, err := repository.NewConnector(client)
+	repo, err := repository.NewRepository(client)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,6 +45,6 @@ func main() {
 
 	for _, transaction := range transactions {
 		fmt.Println(transaction.Ticker)
-		connector.InsertTransaction(ctx, *transaction)
+		repo.InsertTransaction(ctx, *transaction)
 	}
 }

@@ -3,11 +3,11 @@ package service
 import "github.com/Arjun-P17/tax-go/internal/repository"
 
 type Service struct {
-	dbConnector *repository.Connector
+	repository *repository.Repository
 }
 
-func NewService(dbConnector *repository.Connector) *Service {
+func NewService(repo *repository.Repository) *Service {
 	return &Service{
-		dbConnector: dbConnector,
+		repository: repo,
 	}
 }

@@ -33,11 +33,11 @@ func main() {
 		}
 	}()
 
-	connector, err := repository.NewConnector(client)
+	repo, err := repository.NewRepository(client)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	service := service.NewService(connector)
+	service := service.NewService(repo)
 	service.ProcessTrades(ctx)
 }

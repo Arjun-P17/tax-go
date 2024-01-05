@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]StockTransactions, error) {
+func (c *Repository) GetAllStockTransactions(ctx context.Context) ([]StockTransactions, error) {
 	collection := c.GetCollection(dbName, transactionsCollection)
 
 	cursor, err := collection.Find(ctx, bson.M{})
@@ -24,7 +24,7 @@ func (c *Connector) GetAllStockTransactions(ctx context.Context) ([]StockTransac
 	return stockTransactions, nil
 }
 
-func (c *Connector) upsertStockTransaction(ctx context.Context, filter bson.M, update bson.M) error {
+func (c *Repository) upsertStockTransaction(ctx context.Context, filter bson.M, update bson.M) error {
 	collection := c.GetCollection(dbName, transactionsCollection)
 
 	options := options.Update().SetUpsert(true)
@@ -32,7 +32,7 @@ func (c *Connector) upsertStockTransaction(ctx context.Context, filter bson.M, u
 	return err
 }
 
-func (c *Connector) InsertTransaction(ctx context.Context, transaction Transaction) error {
+func (c *Repository) InsertTransaction(ctx context.Context, transaction Transaction) error {
 	collection := c.GetCollection(dbName, transactionsCollection)
 
 	// Check if the document exists.

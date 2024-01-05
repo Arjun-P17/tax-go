@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Service) ProcessTrades(ctx context.Context) error {
-	stocksTransactions, err := s.dbConnector.GetAllStockTransactions(ctx)
+	stocksTransactions, err := s.repository.GetAllStockTransactions(ctx)
 	if err != nil {
 		return err
 	}
@@ -18,7 +18,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 	for _, stockTransaction := range stocksTransactions {
 		ticker := stockTransaction.Ticker
 
-		stockPosition, err := s.dbConnector.GetStockPositionOrDefault(ctx, ticker)
+		stockPosition, err := s.repository.GetStockPositionOrDefault(ctx, ticker)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 		// Sometimes complete buy and sells dont fully add up to 0
 		stockPosition.Quantity = pkgutils.RoundToTwoDecimalPlaces(stockPosition.Quantity)
 
-		if err := s.dbConnector.UpsertStockPosition(ctx, ticker, *stockPosition); err != nil {
+		if err := s.repository.UpsertStockPosition(ctx, ticker, *stockPosition); err != nil {
 			return err
 		}
 	}
