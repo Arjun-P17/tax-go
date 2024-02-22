@@ -38,7 +38,7 @@ func main() {
 		}
 	}()
 
-	repo, err := repository.NewRepository(client)
+	repo, err := repository.NewRepository(client, config.Database)
 	if err != nil {
 		log.Fatal(err)
 	}

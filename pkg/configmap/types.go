@@ -6,8 +6,11 @@ type Config struct {
 }
 
 type Database struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
+	Host                   string `yaml:"host"`
+	Port                   int    `yaml:"port"`
+	DatabaseName           string `yaml:"databaseName"`
+	TransactionsCollection string `yaml:"transactionsCollection"`
+	PositionsCollection    string `yaml:"positionsCollection"`
 }
 
 type Trades struct {

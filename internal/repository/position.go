@@ -11,7 +11,7 @@ import (
 )
 
 func (c *Repository) GetAllStockPositions(ctx context.Context) ([]StockPosition, error) {
-	collection := c.GetCollection(dbName, positionsCollection)
+	collection := c.GetCollection(c.config.DatabaseName, c.config.PositionsCollection)
 
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
@@ -28,7 +28,7 @@ func (c *Repository) GetAllStockPositions(ctx context.Context) ([]StockPosition,
 }
 
 func (c *Repository) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
-	collection := c.GetCollection(dbName, positionsCollection)
+	collection := c.GetCollection(c.config.DatabaseName, c.config.PositionsCollection)
 
 	filter := bson.M{"_id": ticker}
 	stockPosition := &StockPosition{}
@@ -43,7 +43,7 @@ func (c *Repository) GetStockPositionOrDefault(ctx context.Context, ticker strin
 }
 
 func (c *Repository) UpsertStockPosition(ctx context.Context, ticker string, stockPosition StockPosition) error {
-	collection := c.GetCollection(dbName, positionsCollection)
+	collection := c.GetCollection(c.config.DatabaseName, c.config.PositionsCollection)
 
 	filter := bson.M{"ticker": ticker}
 	update := bson.M{"$set": stockPosition}

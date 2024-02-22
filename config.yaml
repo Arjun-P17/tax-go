@@ -1,5 +1,8 @@
 database:
   host: "localhost"
   port: 27017
+  databaseName: "tax"
+  transactionsCollection: "transactions"
+  positionsCollection: "positions"
 trades:
   csvpath: "./ibkr.csv"
