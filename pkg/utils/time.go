@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"math"
 	"time"
 )
 
@@ -12,21 +11,6 @@ func StringToTime(dateString string) (time.Time, error) {
 		return time.Time{}, err
 	}
 	return date, nil
-}
-
-var tickerMap = map[string]string{"FB": "META"}
-
-func GetMappedTicker(ticker string) string {
-	mappedTicker := tickerMap[ticker]
-	if mappedTicker == "" {
-		mappedTicker = ticker
-	}
-
-	return mappedTicker
-}
-
-func RoundToTwoDecimalPlaces(num float64) float64 {
-	return math.Round(num*100) / 100
 }
 
 func IsOneYearGreaterThan(date1, date2 time.Time) bool {

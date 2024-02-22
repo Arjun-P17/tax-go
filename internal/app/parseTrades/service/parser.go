@@ -6,13 +6,10 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
-
-// TODO: move into internal/service
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
 func ParseTransactions(csvFilePath string) ([]*repository.Transaction, error) {
@@ -115,7 +112,7 @@ func parseTransaction(row []string) (*repository.Transaction, error) {
 	fmt.Println(proceeds, quantity, realPrice)
 
 	// Handle stock splits
-	splitFactor, err := getSplitFactor(ticker, date)
+	splitFactor, err := utils.GetSplitFactor(ticker, date)
 	if err != nil {
 		fmt.Println(ticker, err)
 		return nil, err
@@ -139,33 +136,4 @@ func parseTransaction(row []string) (*repository.Transaction, error) {
 		USDAUD:       1.45,
 		Splitfactor:  splitFactor,
 	}, nil
-}
-
-var splitFactors = map[string]struct {
-	Date   string
-	Factor float64
-}{
-	"AMZN": {"2022-06-06, 00:00:00", 20.0},
-	"SHOP": {"2022-06-29, 00:00:00", 10.0},
-	"TSLA": {"2022-08-25, 00:00:00", 3.0},
-	"PANW": {"2022-09-14, 00:00:00", 3.0},
-}
-
-// getSplitfactor returns the splitfactor for a stock split, if transaction date is before splitdate so we can normalise the transaction values relative to post split
-func getSplitFactor(ticker string, date time.Time) (float64, error) {
-	info, exists := splitFactors[ticker]
-	if !exists {
-		return 1.0, nil
-	}
-
-	splitDateParsed, err := utils.StringToTime(info.Date)
-	if err != nil {
-		return 1.0, err
-	}
-
-	if date.After(splitDateParsed) {
-		return 1.0, nil
-	}
-
-	return info.Factor, nil
 }

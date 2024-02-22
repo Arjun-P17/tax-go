@@ -10,22 +10,11 @@ import (
 	Transaction Models
 */
 
-type TransactionType string
-
-var (
-	Buytype  TransactionType = "BUY"
-	Selltype TransactionType = "SELL"
-)
-
-type TaxMethod string
-
-var (
-	FIFO    TaxMethod = "FIFO"
-	LIFO    TaxMethod = "LIFO"
-	MaxLoss TaxMethod = "MAX_LOSS"
-	MinGain TaxMethod = "MIN_GAIN"
-	MinCGT  TaxMethod = "MIN_CGT"
-)
+// StockTransactions represents the transactions for a ticker.
+type StockTransactions struct {
+	Ticker       string
+	Transactions []Transaction
+}
 
 // Transaction represents the transaction object parsed from the broker.
 // It is the base type for Buy and Sell and all numbers are positive.
@@ -48,6 +37,13 @@ type Transaction struct {
 	Splitfactor  float64
 }
 
+type TransactionType string
+
+var (
+	Buytype  TransactionType = "BUY"
+	Selltype TransactionType = "SELL"
+)
+
 // Sell represents a sell transaction.
 type Sell struct {
 	Transaction
@@ -65,6 +61,16 @@ func (s Sell) GetDate() time.Time {
 func (s Sell) GetBasis() float64 {
 	return s.Basis
 }
+
+type TaxMethod string
+
+var (
+	FIFO    TaxMethod = "FIFO"
+	LIFO    TaxMethod = "LIFO"
+	MaxLoss TaxMethod = "MAX_LOSS"
+	MinGain TaxMethod = "MIN_GAIN"
+	MinCGT  TaxMethod = "MIN_CGT"
+)
 
 // BuySold represents a buy transaction on each sell
 type BuySold struct {
@@ -84,12 +90,6 @@ func (b Buy) GetDate() time.Time {
 
 func (b Buy) GetBasis() float64 {
 	return b.Basis
-}
-
-// StockTransactions represents the transactions for a ticker.
-type StockTransactions struct {
-	Ticker       string
-	Transactions []Transaction
 }
 
 /*

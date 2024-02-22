@@ -53,6 +53,7 @@ func (c *Repository) InsertTransaction(ctx context.Context, transaction Transact
 	}
 
 	// If the document exists, push the new transaction into the array.
+	// If the transaction already exists, it will not be added again.
 	update := bson.M{
 		"$addToSet": bson.M{"transactions": transaction},
 	}
