@@ -29,15 +29,16 @@ var (
 
 // Transaction represents the transaction object parsed from the broker.
 // It is the base type for Buy and Sell and all numbers are positive.
-// Relevant values are adjust to accomodate stock splits
+// Relevant values are adjusted to accomodate stock splits
 type Transaction struct {
-	ID           string
-	Ticker       string
-	Currency     string
-	Date         time.Time
-	Type         TransactionType
-	Quantity     float64
-	TradePrice   float64
+	ID         string
+	Ticker     string
+	Currency   string
+	Date       time.Time
+	Type       TransactionType
+	Quantity   float64
+	TradePrice float64
+	// Adjusted trade price for stock splits
 	RealPrice    float64
 	Proceeds     float64
 	BrokerageFee float64

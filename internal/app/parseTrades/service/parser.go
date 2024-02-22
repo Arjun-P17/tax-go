@@ -12,6 +12,8 @@ import (
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
+// TODO: move into internal/service
+
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
 func ParseTransactions(csvFilePath string) ([]*repository.Transaction, error) {
 	transactions := make([]*repository.Transaction, 0)

@@ -5,8 +5,10 @@ This project is designed to determine the tax implications of stock trades based
 Please note that this project is currently in development, and efforts are underway to address some limitations:
 - Only compatible with files formatted according to Interactive Brokers (IBKR).
 - Only utilizes a FIFO algorithm for determining which buy allotments to sell.
-- Currently, the calculation is done in USD.
+- Currently, the tax calculation is done in USD.
 - No testing
+
+Models in the repository layer contain comments with details about the structs and the fields.
 
 ### Usage
 
@@ -16,3 +18,6 @@ Please note that this project is currently in development, and efforts are under
 Running is a two step process
 - run `make parseTrades` to parse the trades into the db
 - run  `make processTrades` to process the trades and calculate tax info
+
+A grpc server serves a simple API that returns the transactions for all stocks.
+- run `make run` to start the server

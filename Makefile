@@ -8,4 +8,4 @@ processTrades:
 
 .PHONY: run
 run:
-	go run internal/app/run.go
+	go run internal/app/server/run.go

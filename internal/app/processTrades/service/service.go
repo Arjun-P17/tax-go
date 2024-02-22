@@ -2,6 +2,7 @@ package service
 
 import "github.com/Arjun-P17/tax-go/internal/repository"
 
+// TODO: move into internal/service
 type Service struct {
 	repository *repository.Repository
 }

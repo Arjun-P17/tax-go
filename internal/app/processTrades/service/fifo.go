@@ -16,6 +16,7 @@ type FifoOutput struct {
 // Calculate the profit on the trade using fifo
 func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.Buy) FifoOutput {
 	profit, cgtProfit := 0.0, 0.0
+	// List of buys that the sell corresponds to
 	buysSold := []repository.BuySold{}
 
 	sellQ := sell.Quantity
