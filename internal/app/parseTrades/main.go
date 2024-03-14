@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/Arjun-P17/tax-go/internal/app/parseTrades/service"
 	"github.com/Arjun-P17/tax-go/internal/repository"
@@ -38,7 +39,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	transactions, err := service.ParseTransactions(config.Trades.CSVPath)
+	file, err := os.Open(config.Trades.CSVPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	transactions, err := service.ParseTransactions(file)
 	if err != nil {
 		log.Fatal(err)
 	}

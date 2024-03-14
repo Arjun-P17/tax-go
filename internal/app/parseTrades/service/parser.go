@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/csv"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -12,14 +13,12 @@ import (
 )
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
-func ParseTransactions(csvFilePath string) ([]*repository.Transaction, error) {
-	transactions := make([]*repository.Transaction, 0)
-
-	file, err := os.Open(csvFilePath)
-	if err != nil {
-		return nil, err
+func ParseTransactions(file *os.File) ([]*repository.Transaction, error) {
+	if file == nil {
+		return nil, errors.New("nil file")
 	}
-	defer file.Close()
+
+	transactions := make([]*repository.Transaction, 0)
 
 	reader := csv.NewReader(file)
 	for {

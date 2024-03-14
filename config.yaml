@@ -1,7 +1,7 @@
 database:
   host: "localhost"
   port: 27017
-  databaseName: "tax"
+  databaseName: "tax-go"
   transactionsCollection: "transactions"
   positionsCollection: "positions"
 trades:
