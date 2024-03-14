@@ -10,10 +10,9 @@ type serviceInterface interface {
 	ProcessTrades(ctx context.Context) error
 }
 
-// TODO: move into internal/service
 type Service struct {
 	serviceInterface
-	repository *repository.Repository
+	repository repository.RepositoryInterface
 }
 
 func NewService(repo *repository.Repository) *Service {

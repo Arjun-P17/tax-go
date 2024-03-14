@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type repositoryInterface interface {
+type RepositoryInterface interface {
 	GetCollection(db string, collection string) *mongo.Collection
 
 	GetAllStockPositions(ctx context.Context) ([]StockPosition, error)
@@ -19,7 +19,7 @@ type repositoryInterface interface {
 }
 
 type Repository struct {
-	repositoryInterface
+	RepositoryInterface
 	config configmap.Database
 	client *mongo.Client
 }
