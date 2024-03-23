@@ -1,0 +1,4 @@
+Trades,Header,DataDiscriminator,Asset Category,Currency,Symbol,Date/Time,Quantity,T. Price,C. Price,Proceeds,Comm/Fee,Basis,Realized P/L,MTM P/L,Code
+Trades,Data,Order,Stocks,USD,AAPL,"2022-07-28, 00:07:43",1.0891,154.2483638,156.79,-167.991893,-0.34837507,168.3402681,0,2.7681,O;P;RPA
+Trades,Data,Order,Stocks,USD,AAPL,"2022-09-13, 00:13:13",0.4023,161.5493,163.43,-64.99128339,-0.35033771,65.3416211,0,0.7566,O;RP
+Trades,Data,Order,Stocks,USD,AAPL,"2022-11-02, 01:02:09",-1.4914,152.31,150.65,227.155134,-0.355951265,-233.681889,-6.882706,2.4757,C;FPA;P
