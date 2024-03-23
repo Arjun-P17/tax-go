@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// Tests when the sell requires multiple buys to be sold
 func Test_FIFO_1(t *testing.T) {
 	buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo1.csv")
 	assert.Nil(t, err)
@@ -34,6 +35,8 @@ func Test_FIFO_1(t *testing.T) {
 	assert.Equal(t, expectedOutput, output)
 }
 
+// Tests when the sell quantity is less than the buy quantity
+// Tests when sell is greater than one year after the buy for profit and loss cases
 func Test_FIFO_2(t *testing.T) {
 	buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo2.csv")
 	assert.Nil(t, err)
@@ -68,6 +71,16 @@ func Test_FIFO_2(t *testing.T) {
 			},
 			Profit:    57.33589321691738,
 			CGTProfit: 28.66794660845869,
+		},
+		{
+			BuysSold: []repository.BuySold{
+				{
+					BuyID:    "2022-06-08:01:02:04_NVDA_1.5675_188.1927604",
+					Quantity: 0.5,
+				},
+			},
+			Profit:    -1.6258054214641078,
+			CGTProfit: -1.6258054214641078,
 		},
 	}
 
