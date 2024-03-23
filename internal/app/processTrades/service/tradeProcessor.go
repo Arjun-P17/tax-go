@@ -10,20 +10,20 @@ import (
 )
 
 func (s *Service) ProcessTrades(ctx context.Context) error {
-	stocksTransactions, err := s.repository.GetAllStockTransactions(ctx)
+	allStocksTransactions, err := s.repository.GetAllStockTransactions(ctx)
 	if err != nil {
 		return err
 	}
 
-	for _, stockTransaction := range stocksTransactions {
-		ticker := stockTransaction.Ticker
+	for _, stockTransactions := range allStocksTransactions {
+		ticker := stockTransactions.Ticker
 
 		stockPosition, err := s.repository.GetStockPositionOrDefault(ctx, ticker)
 		if err != nil {
 			return err
 		}
 
-		for _, transaction := range stockTransaction.Transactions {
+		for _, transaction := range stockTransactions.Transactions {
 			if !utils.IsUniqueTransaction(stockPosition.Buys, transaction) && !utils.IsUniqueTransaction(stockPosition.Sells, transaction) {
 				continue
 			}
