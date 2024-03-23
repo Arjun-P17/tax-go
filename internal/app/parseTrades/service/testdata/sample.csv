@@ -1,0 +1,6 @@
+Trades,Header,DataDiscriminator,Asset Category,Currency,Symbol,Date/Time,Quantity,T. Price,C. Price,Proceeds,Comm/Fee,Basis,Realized P/L,MTM P/L,Code
+Trades,Data,Order,Stocks,USD,FATE,"2021-09-03, 01:25:41",1.5,75.68963333,75.5,-113.53445,-1,114.53445,0,-0.2844,O;P;RPA
+Trades,Data,Order,Stocks,USD,FATE,"2022-04-14, 23:47:07",-1.5,38.18666667,37.77,57.28,-0.351044378,-114.53445,-57.605495,0.625,C;FPA;P
+Trades,Data,Order,Stocks,USD,FB,"2021-12-30, 07:17:15",2.7688,343.0966958,342.94,-949.9661313,-1,950.9661313,0,-0.4339,O;P;RPA
+Trades,Data,Order,Stocks,USD,PANW,"2022-09-12, 23:53:16",0.5273,568.86,568.08,-299.959878,-0.35036271,300.3102407,0,-0.4113,O;RP
+Trades,Data,Order,Stocks,USD,TQQQ,"2024-03-09, 01:57:36",2,63.619,60.06,-127.238,-0.35065725,127.5886573,0,-7.118,O
