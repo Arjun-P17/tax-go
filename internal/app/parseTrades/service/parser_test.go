@@ -1,13 +1,13 @@
 package service
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"reflect"
 	"testing"
 
-	"github.com/Arjun-P17/tax-go/internal/repository"
+	"github.com/Arjun-P17/tax-go/internal/testutils"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +21,7 @@ func TestParseTransactions(t *testing.T) {
 	parsedTransactions, err := ParseTransactions(file)
 	assert.Nil(t, err)
 
-	loadedTransactions, err := loadFromFile("./testdata/sample.txt")
+	loadedTransactions, err := testutils.LoadFromFile("./testdata/sample.txt")
 	assert.Nil(t, err)
 
 	if reflect.DeepEqual(parsedTransactions, loadedTransactions) {
@@ -29,30 +29,4 @@ func TestParseTransactions(t *testing.T) {
 	} else {
 		fmt.Println("Loaded slice does not match original slice")
 	}
-
-}
-
-// func saveToFile(transactions []*repository.Transaction, filename string) error {
-// 	data, err := json.Marshal(transactions)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	err = os.WriteFile(filename, data, 0644)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
-
-func loadFromFile(filename string) ([]*repository.Transaction, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	var transactions []*repository.Transaction
-	err = json.Unmarshal(data, &transactions)
-	if err != nil {
-		return nil, err
-	}
-	return transactions, nil
 }
