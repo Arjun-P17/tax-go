@@ -1,8 +1,6 @@
 package service
 
 import (
-	"context"
-
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
@@ -15,7 +13,7 @@ type ProcessSellOutput struct {
 
 // Calculate the profit on the sell using FIFO
 // buy.QuantityLeft in the relevant buys of the input buy array is modified to reflect the sale
-func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.Buy) ProcessSellOutput {
+func fifo(sell repository.Transaction, buys *[]repository.Buy) ProcessSellOutput {
 	profit, cgtProfit := 0.0, 0.0
 	// List of buys that the sell corresponds to
 	buysSold := []repository.BuySold{}

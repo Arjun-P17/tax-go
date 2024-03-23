@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -12,10 +11,10 @@ import (
 
 // Tests when the sell requires multiple buys to be sold
 func Test_FIFO_1(t *testing.T) {
-	buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo1.csv")
+	_, buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo1.csv")
 	assert.Nil(t, err)
 
-	output := fifo(context.Background(), sells[0], &buys)
+	output := fifo(sells[0], &buys)
 
 	expectedOutput := ProcessSellOutput{
 		Profit:    -6.882706435000025,
@@ -38,7 +37,7 @@ func Test_FIFO_1(t *testing.T) {
 // Tests when the sell quantity is less than the buy quantity
 // Tests when sell is greater than one year after the buy for profit and loss cases
 func Test_FIFO_2(t *testing.T) {
-	buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo2.csv")
+	_, buys, sells, err := LoadTransactionsFromCSV("./testdata/fifo2.csv")
 	assert.Nil(t, err)
 
 	tests := []ProcessSellOutput{
@@ -85,28 +84,29 @@ func Test_FIFO_2(t *testing.T) {
 	}
 
 	for index, test := range tests {
-		output := fifo(context.Background(), sells[index], &buys)
+		output := fifo(sells[index], &buys)
 		assert.Equal(t, test, output)
 	}
 }
 
-func LoadTransactionsFromCSV(csvpath string) ([]repository.Buy, []repository.Transaction, error) {
+func LoadTransactionsFromCSV(csvpath string) ([]repository.Transaction, []repository.Buy, []repository.Transaction, error) {
 	file, err := os.Open(csvpath)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 	defer file.Close()
 
 	transactions, err := service.ParseTransactions(file)
 	if err != nil {
-		return nil, nil, err
+		return nil, nil, nil, err
 	}
 
+	allTransactions := []repository.Transaction{}
 	buys := []repository.Buy{}
 	sells := []repository.Transaction{}
 	for _, transaction := range transactions {
 		if transaction == nil {
-			return nil, nil, err
+			return nil, nil, nil, err
 		}
 
 		if transaction.Type == repository.Buytype {
@@ -118,7 +118,8 @@ func LoadTransactionsFromCSV(csvpath string) ([]repository.Buy, []repository.Tra
 		} else {
 			sells = append(sells, *transaction)
 		}
+		allTransactions = append(allTransactions, *transaction)
 	}
 
-	return buys, sells, nil
+	return allTransactions, buys, sells, nil
 }

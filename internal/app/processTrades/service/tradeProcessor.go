@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/internal/utils"
@@ -24,27 +23,13 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 		}
 
 		for _, transaction := range stockTransactions.Transactions {
-			if !utils.IsUniqueTransaction(stockPosition.Buys, transaction) && !utils.IsUniqueTransaction(stockPosition.Sells, transaction) {
+			unique := processTransaction(stockPosition, transaction)
+			// No need for the unique check but keeping it for explicitness
+			if !unique {
 				continue
 			}
 
-			if transaction.Type == repository.Buytype {
-				stockPosition.Quantity += transaction.Quantity
-				stockPosition.NetSpend += transaction.Proceeds
-				processBuy(ctx, stockPosition, transaction)
-			} else {
-				stockPosition.Quantity -= transaction.Quantity
-				stockPosition.NetSpend -= transaction.Proceeds
-				taxMethod := repository.FIFO
-				sell, err := processSell(ctx, stockPosition, transaction, taxMethod)
-				if err != nil {
-					return err
-				}
-				stockPosition.SoldProfit += sell.Profit
-				stockPosition.CGTProfit += sell.CGTProfit
-
-				// TODO: Insert tax event
-			}
+			// TODO: Insert tax event on sells
 		}
 
 		// Sometimes complete buy and sells dont fully add up to 0
@@ -58,7 +43,28 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 	return nil
 }
 
-func processBuy(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction) {
+// processTransaction processes the transaction and updates the stock position
+// returns false if the transaction is not unique
+func processTransaction(stockPosition *repository.StockPosition, transaction repository.Transaction) bool {
+	if !utils.IsUniqueTransaction(stockPosition.Buys, transaction) && !utils.IsUniqueTransaction(stockPosition.Sells, transaction) {
+		return false
+	}
+
+	if transaction.Type == repository.Buytype {
+		processBuy(stockPosition, transaction)
+	} else {
+		taxMethod := repository.FIFO
+		sell := processSell(stockPosition, transaction, taxMethod)
+
+		stockPosition.SoldProfit += sell.Profit
+		stockPosition.CGTProfit += sell.CGTProfit
+	}
+	return true
+}
+
+func processBuy(stockPosition *repository.StockPosition, transaction repository.Transaction) {
+	stockPosition.Quantity += transaction.Quantity
+	stockPosition.NetSpend += transaction.Proceeds
 	buy := repository.Buy{
 		Transaction:  transaction,
 		QuantityLeft: transaction.Quantity,
@@ -66,11 +72,12 @@ func processBuy(ctx context.Context, stockPosition *repository.StockPosition, tr
 	stockPosition.Buys = append(stockPosition.Buys, buy)
 }
 
-func processSell(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) (*repository.Sell, error) {
-	// TODO: Use the right algo using taxMethod
-	taxProfit := fifo(ctx, transaction, &stockPosition.Buys)
+func processSell(stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) *repository.Sell {
+	stockPosition.Quantity -= transaction.Quantity
+	stockPosition.NetSpend -= transaction.Proceeds
 
-	fmt.Println(taxProfit)
+	// TODO: Use the right algo using taxMethod
+	taxProfit := fifo(transaction, &stockPosition.Buys)
 
 	sell := &repository.Sell{
 		Transaction: transaction,
@@ -81,5 +88,5 @@ func processSell(ctx context.Context, stockPosition *repository.StockPosition, t
 	}
 	stockPosition.Sells = append(stockPosition.Sells, *sell)
 
-	return sell, nil
+	return sell
 }
