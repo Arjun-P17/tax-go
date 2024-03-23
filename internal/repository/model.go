@@ -20,14 +20,15 @@ type StockTransactions struct {
 // It is the base type for Buy and Sell and all numbers are positive.
 // Relevant values are adjusted to accomodate stock splits
 type Transaction struct {
-	ID         string
-	Ticker     string
-	Currency   string
-	Date       time.Time
-	Type       TransactionType
-	Quantity   float64
+	ID       string
+	Ticker   string
+	Currency string
+	Date     time.Time
+	Type     TransactionType
+	Quantity float64
+	// Trade price as defined by the broker
 	TradePrice float64
-	// Adjusted trade price for stock splits
+	// Adjusted trade price for stock splits and brokerage
 	RealPrice    float64
 	Proceeds     float64
 	BrokerageFee float64

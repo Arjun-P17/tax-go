@@ -105,7 +105,7 @@ func parseTransaction(row []string) (*repository.Transaction, error) {
 		proceeds *= -1
 		proceeds += brokerageFee
 	}
-
+	// real price is the price per unit after brokerage fees
 	realPrice := proceeds / quantity
 
 	fmt.Println(proceeds, quantity, realPrice)
@@ -116,9 +116,10 @@ func parseTransaction(row []string) (*repository.Transaction, error) {
 		fmt.Println(ticker, err)
 		return nil, err
 	}
-	quantity, tradePrice, realPrice = quantity*splitFactor, tradePrice/splitFactor, realPrice/splitFactor
+	// adjust quantity and real price by the split factor
+	quantity, realPrice = quantity*splitFactor, realPrice/splitFactor
 
-	id := fmt.Sprintf("%s_%s_%v_%v", date.Format("2006-01-02:15:04:05"), ticker, quantity, proceeds)
+	id := fmt.Sprintf("%s_%s_%v_%v", utils.TimeToString(date), ticker, quantity, tradePrice)
 	return &repository.Transaction{
 		ID:           id,
 		Ticker:       ticker,

@@ -7,14 +7,15 @@ import (
 	"github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
-type FifoOutput struct {
+type ProcessSellOutput struct {
 	Profit    float64
 	CGTProfit float64
 	BuysSold  []repository.BuySold
 }
 
-// Calculate the profit on the trade using fifo
-func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.Buy) FifoOutput {
+// Calculate the profit on the sell using FIFO
+// buy.QuantityLeft in the relevant buys of the input buy array is modified to reflect the sale
+func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.Buy) ProcessSellOutput {
 	profit, cgtProfit := 0.0, 0.0
 	// List of buys that the sell corresponds to
 	buysSold := []repository.BuySold{}
@@ -46,7 +47,13 @@ func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.B
 		} else {
 			tradeProfit = sellQ * (sellPrice - buyPrice)
 			buy.QuantityLeft -= sellQ
+
+			buysSold = append(buysSold, repository.BuySold{
+				BuyID:    buy.ID,
+				Quantity: sellQ,
+			})
 			sellQ = 0
+
 		}
 		profit += tradeProfit
 
@@ -63,7 +70,7 @@ func fifo(ctx context.Context, sell repository.Transaction, buys *[]repository.B
 
 	}
 
-	return FifoOutput{
+	return ProcessSellOutput{
 		Profit:    profit,
 		CGTProfit: cgtProfit,
 		BuysSold:  buysSold,

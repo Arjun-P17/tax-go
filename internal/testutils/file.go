@@ -4,22 +4,10 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/Arjun-P17/tax-go/internal/app/parseTrades/service"
 	"github.com/Arjun-P17/tax-go/internal/repository"
 )
 
-func SaveToFile(inputcsv string, outputfile string) error {
-	file, err := os.Open(inputcsv)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	transactions, err := service.ParseTransactions(nil)
-	if err != nil {
-		return err
-	}
-
+func SaveToFile(transactions []*repository.Transaction, outputfile string) error {
 	data, err := json.Marshal(transactions)
 	if err != nil {
 		return err
@@ -31,7 +19,7 @@ func SaveToFile(inputcsv string, outputfile string) error {
 	return nil
 }
 
-func LoadFromFile(filename string) ([]*repository.Transaction, error) {
+func LoadTransactionsFromFile(filename string) ([]*repository.Transaction, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
