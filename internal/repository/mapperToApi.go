@@ -136,7 +136,7 @@ func (st StockTax) ToProtoModel() *stockpb.StockTax {
 	}
 
 	return &stockpb.StockTax{
-		Ticker:          st.Ticker,
+		FinancialYear:   st.FinancialYear,
 		NetProfitCgt:    st.NetProfitCGT,
 		NetProfitCgtAud: st.NetProfitCGTAUD,
 		NetProfit:       st.NetProfit,

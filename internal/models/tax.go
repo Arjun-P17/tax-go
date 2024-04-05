@@ -12,7 +12,7 @@ type TaxEvent struct {
 }
 
 type StockTax struct {
-	Ticker          string
+	FinancialYear   string
 	NetProfitCGT    float64
 	NetProfitCGTAUD float64
 	NetProfit       float64

@@ -116,6 +116,7 @@ type StockPosition struct {
 type TaxEvent struct {
 	Date         time.Time
 	Ticker       string
+	Sell         Sell
 	Profit       float64
 	ProfitAUD    float64
 	CGTProfit    float64
@@ -124,7 +125,7 @@ type TaxEvent struct {
 
 // StockTax represents stock tax information.
 type StockTax struct {
-	Ticker          string
+	FinancialYear   string
 	NetProfitCGT    float64
 	NetProfitCGTAUD float64
 	NetProfit       float64

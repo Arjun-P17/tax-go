@@ -136,7 +136,7 @@ func (st StockTax) ToModel() models.StockTax {
 	}
 
 	return models.StockTax{
-		Ticker:          st.Ticker,
+		FinancialYear:   st.FinancialYear,
 		NetProfitCGT:    st.NetProfitCGT,
 		NetProfitCGTAUD: st.NetProfitCGTAUD,
 		NetProfit:       st.NetProfit,

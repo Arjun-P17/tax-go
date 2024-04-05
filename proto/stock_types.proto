@@ -73,7 +73,7 @@ message TaxEvent {
   }
   
   message StockTax {
-    string ticker = 1;
+    string financial_year = 1;
     double net_profit_cgt = 2;
     double net_profit_cgt_aud = 3;
     double net_profit = 4;
