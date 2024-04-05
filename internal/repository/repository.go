@@ -9,13 +9,16 @@ import (
 )
 
 type RepositoryInterface interface {
-	GetCollection(db string, collection string) *mongo.Collection
+	GetCollection(collection string) *mongo.Collection
 
 	GetAllStockPositions(ctx context.Context) ([]StockPosition, error)
 	GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error)
 	UpsertStockPosition(ctx context.Context, ticker string, stockPosition StockPosition) error
 
 	GetAllStockTransactions(ctx context.Context) ([]StockTransactions, error)
+	InsertTransaction(ctx context.Context, transaction Transaction) error
+
+	InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDAUD float64) error
 }
 
 type Repository struct {
@@ -35,9 +38,9 @@ func NewRepository(client *mongo.Client, dbConfig configmap.Database) (*Reposito
 	}, nil
 }
 
-func (c *Repository) GetCollection(db string, collection string) *mongo.Collection {
+func (c *Repository) GetCollection(collection string) *mongo.Collection {
 	client := c.client
-	col := client.Database(db).Collection(collection)
+	col := client.Database(c.config.DatabaseName).Collection(collection)
 
 	return col
 }

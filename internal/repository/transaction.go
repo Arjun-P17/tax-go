@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Repository) GetAllStockTransactions(ctx context.Context) ([]StockTransactions, error) {
-	collection := c.GetCollection(c.config.DatabaseName, c.config.TransactionsCollection)
+	collection := c.GetCollection(c.config.TransactionsCollection)
 
 	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
@@ -25,7 +25,7 @@ func (c *Repository) GetAllStockTransactions(ctx context.Context) ([]StockTransa
 }
 
 func (c *Repository) upsertStockTransaction(ctx context.Context, filter bson.M, update bson.M) error {
-	collection := c.GetCollection(c.config.DatabaseName, c.config.TransactionsCollection)
+	collection := c.GetCollection(c.config.TransactionsCollection)
 
 	options := options.Update().SetUpsert(true)
 	_, err := collection.UpdateOne(ctx, filter, update, options)
@@ -33,7 +33,7 @@ func (c *Repository) upsertStockTransaction(ctx context.Context, filter bson.M, 
 }
 
 func (c *Repository) InsertTransaction(ctx context.Context, transaction Transaction) error {
-	collection := c.GetCollection(c.config.DatabaseName, c.config.TransactionsCollection)
+	collection := c.GetCollection(c.config.TransactionsCollection)
 
 	// Check if the document exists.
 	filter := bson.M{"ticker": transaction.Ticker}
@@ -43,6 +43,7 @@ func (c *Repository) InsertTransaction(ctx context.Context, transaction Transact
 	}
 
 	if count == 0 {
+		// If the document does not exist, create and insert new document.
 		newStockTransaction := StockTransactions{
 			Ticker:       transaction.Ticker,
 			Transactions: []Transaction{transaction},
