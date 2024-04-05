@@ -23,7 +23,7 @@ func fifo(sell repository.Transaction, buys *[]repository.Buy) ProcessSellOutput
 
 	// since buys are in FIFO order, we can just iterate through them
 	for i := 0; i < len(*buys) && sellQ > 0; i++ {
-		buy := (*buys)[i]
+		buy := &(*buys)[i]
 		buyQ := buy.QuantityLeft
 		// If current lot sold continue
 		if buyQ == 0 {
@@ -62,10 +62,6 @@ func fifo(sell repository.Transaction, buys *[]repository.Buy) ProcessSellOutput
 		} else {
 			cgtProfit += tradeProfit
 		}
-
-		// We need to update the buy as we've changed the quantity left
-		(*buys)[i] = buy
-
 	}
 
 	return ProcessSellOutput{
