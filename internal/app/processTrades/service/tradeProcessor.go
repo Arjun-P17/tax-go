@@ -23,16 +23,14 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 		}
 
 		for _, transaction := range stockTransactions.Transactions {
-			unique := processTransaction(stockPosition, transaction)
+			unique := s.processTransaction(ctx, stockPosition, transaction)
 			// No need for the unique check but keeping it for explicitness
 			if !unique {
 				continue
 			}
-
-			// TODO: Insert tax event on sells
 		}
 
-		// Sometimes complete buy and sells dont fully add up to 0
+		// Sometimes complete buy and sells dont fully add up to 0 so round it off
 		stockPosition.Quantity = pkgutils.RoundToTwoDecimalPlaces(stockPosition.Quantity)
 
 		if err := s.repository.UpsertStockPosition(ctx, ticker, *stockPosition); err != nil {
@@ -45,7 +43,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 
 // processTransaction processes the transaction and updates the stock position
 // returns false if the transaction is not unique
-func processTransaction(stockPosition *repository.StockPosition, transaction repository.Transaction) bool {
+func (s *Service) processTransaction(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction) bool {
 	if !utils.IsUniqueTransaction(stockPosition.Buys, transaction) && !utils.IsUniqueTransaction(stockPosition.Sells, transaction) {
 		return false
 	}
@@ -54,7 +52,7 @@ func processTransaction(stockPosition *repository.StockPosition, transaction rep
 		processBuy(stockPosition, transaction)
 	} else {
 		taxMethod := repository.FIFO
-		processSell(stockPosition, transaction, taxMethod)
+		s.processSell(ctx, stockPosition, transaction, taxMethod)
 	}
 	return true
 }
@@ -69,7 +67,7 @@ func processBuy(stockPosition *repository.StockPosition, transaction repository.
 	stockPosition.Buys = append(stockPosition.Buys, buy)
 }
 
-func processSell(stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) {
+func (s *Service) processSell(ctx context.Context, stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) {
 	stockPosition.Quantity -= transaction.Quantity
 	stockPosition.NetSpend -= transaction.Proceeds
 
@@ -79,13 +77,26 @@ func processSell(stockPosition *repository.StockPosition, transaction repository
 	stockPosition.SoldProfit += taxProfit.Profit
 	stockPosition.CGTProfit += taxProfit.CGTProfit
 
-	sell := &repository.Sell{
+	sell := repository.Sell{
 		Transaction: transaction,
 		TaxMethod:   taxMethod,
 		Profit:      taxProfit.Profit,
 		CGTProfit:   taxProfit.CGTProfit,
 		BuysSold:    taxProfit.BuysSold,
 	}
+	stockPosition.Sells = append(stockPosition.Sells, sell)
 
-	stockPosition.Sells = append(stockPosition.Sells, *sell)
+	// Add tax event
+	// TODO: Get the USD to AUD conversion rate from a service
+	USDAUD := 1.5
+	taxEvent := repository.TaxEvent{
+		Ticker:       transaction.Ticker,
+		Date:         transaction.Date,
+		Sell:         sell,
+		Profit:       taxProfit.Profit,
+		ProfitAUD:    taxProfit.Profit * USDAUD,
+		CGTProfit:    taxProfit.CGTProfit,
+		CGTProfitAUD: taxProfit.CGTProfit * USDAUD,
+	}
+	s.repository.InsertTaxEvent(ctx, taxEvent, USDAUD)
 }
