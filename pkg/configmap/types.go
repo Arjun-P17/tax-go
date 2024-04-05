@@ -11,6 +11,7 @@ type Database struct {
 	DatabaseName           string `yaml:"databaseName"`
 	TransactionsCollection string `yaml:"transactionsCollection"`
 	PositionsCollection    string `yaml:"positionsCollection"`
+	TaxCollection          string `yaml:"taxCollection"`
 }
 
 type Trades struct {

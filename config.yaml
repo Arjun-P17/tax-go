@@ -4,5 +4,6 @@ database:
   databaseName: "tax-go"
   transactionsCollection: "transactions"
   positionsCollection: "positions"
+  taxCollection: "tax"
 trades:
   csvpath: "./ibkr.csv"
