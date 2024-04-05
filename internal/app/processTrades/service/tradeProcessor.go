@@ -54,10 +54,7 @@ func processTransaction(stockPosition *repository.StockPosition, transaction rep
 		processBuy(stockPosition, transaction)
 	} else {
 		taxMethod := repository.FIFO
-		sell := processSell(stockPosition, transaction, taxMethod)
-
-		stockPosition.SoldProfit += sell.Profit
-		stockPosition.CGTProfit += sell.CGTProfit
+		processSell(stockPosition, transaction, taxMethod)
 	}
 	return true
 }
@@ -72,12 +69,15 @@ func processBuy(stockPosition *repository.StockPosition, transaction repository.
 	stockPosition.Buys = append(stockPosition.Buys, buy)
 }
 
-func processSell(stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) *repository.Sell {
+func processSell(stockPosition *repository.StockPosition, transaction repository.Transaction, taxMethod repository.TaxMethod) {
 	stockPosition.Quantity -= transaction.Quantity
 	stockPosition.NetSpend -= transaction.Proceeds
 
 	// TODO: Use the right algo using taxMethod
 	taxProfit := fifo(transaction, &stockPosition.Buys)
+
+	stockPosition.SoldProfit += taxProfit.Profit
+	stockPosition.CGTProfit += taxProfit.CGTProfit
 
 	sell := &repository.Sell{
 		Transaction: transaction,
@@ -86,7 +86,6 @@ func processSell(stockPosition *repository.StockPosition, transaction repository
 		CGTProfit:   taxProfit.CGTProfit,
 		BuysSold:    taxProfit.BuysSold,
 	}
-	stockPosition.Sells = append(stockPosition.Sells, *sell)
 
-	return sell
+	stockPosition.Sells = append(stockPosition.Sells, *sell)
 }
