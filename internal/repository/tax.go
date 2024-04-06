@@ -54,10 +54,9 @@ func (c *Repository) InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDA
 		return c.upsertStockTax(ctx, filter, bson.M{"$set": newStockTax})
 	}
 
-	// If the document exists, push the new transaction into the array.
-	// If the taxEvent already exists, it will not be added again.
+	// If the document exists, push the new transaction into the array and update other values.
 	update := bson.M{
-		"$addToSet": bson.M{"events": taxEvent},
+		"$push": bson.M{"events": taxEvent},
 		"$inc": bson.M{
 			"netprofitcgt":    taxEvent.CGTProfit,
 			"netprofitcgtaud": taxEvent.CGTProfit * USDAUD,
