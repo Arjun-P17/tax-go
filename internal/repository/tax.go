@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Repository) upsertStockTax(ctx context.Context, filter bson.M, update bson.M) error {
-	collection := c.GetCollection(c.config.TransactionsCollection)
+	collection := c.GetCollection(c.config.TaxCollection)
 
 	options := options.Update().SetUpsert(true)
 	_, err := collection.UpdateOne(ctx, filter, update, options)
@@ -23,7 +23,7 @@ func (c *Repository) InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDA
 
 	finYear := utils.GetFYYearString(taxEvent.Date)
 	// Check if the document exists.
-	filter := bson.M{"financialYear": finYear}
+	filter := bson.M{"financialyear": finYear}
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		return err
@@ -59,12 +59,12 @@ func (c *Repository) InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDA
 	update := bson.M{
 		"$addToSet": bson.M{"events": taxEvent},
 		"$inc": bson.M{
-			"netProfitCgt":    taxEvent.CGTProfit,
-			"netProfitCgtAud": taxEvent.CGTProfit * USDAUD,
-			"netProfit":       taxEvent.Profit,
-			"netProfitAud":    taxEvent.Profit * USDAUD,
-			"gainsCgt":        gainsCGT,
-			"gainsCgtAud":     gainsCGT * USDAUD,
+			"netprofitcgt":    taxEvent.CGTProfit,
+			"netprofitcgtaud": taxEvent.CGTProfit * USDAUD,
+			"netprofit":       taxEvent.Profit,
+			"netprofitaud":    taxEvent.Profit * USDAUD,
+			"gainscgt":        gainsCGT,
+			"gainscgtaud":     gainsCGT * USDAUD,
 			"gains":           gains,
 			"losses":          losses,
 		},
