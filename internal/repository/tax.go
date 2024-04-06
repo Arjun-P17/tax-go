@@ -16,7 +16,8 @@ func (c *Repository) upsertStockTax(ctx context.Context, filter bson.M, update b
 	return err
 }
 
-// TODO: maybe this should be an upsert like UpsertStockPosition and let the service layer handle the logic to update values
+// TODO: should this be an upsert like UpsertStockPosition and let the service layer handle the logic to update values?
+// TODO: should the buy amount be coverted to aud when calculating profit?
 func (c *Repository) InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDAUD float64) error {
 	collection := c.GetCollection(c.config.TaxCollection)
 
@@ -55,9 +56,18 @@ func (c *Repository) InsertTaxEvent(ctx context.Context, taxEvent TaxEvent, USDA
 
 	// If the document exists, push the new transaction into the array.
 	// If the taxEvent already exists, it will not be added again.
-	// TODO: update the gains and losses
 	update := bson.M{
 		"$addToSet": bson.M{"events": taxEvent},
+		"$inc": bson.M{
+			"netProfitCgt":    taxEvent.CGTProfit,
+			"netProfitCgtAud": taxEvent.CGTProfit * USDAUD,
+			"netProfit":       taxEvent.Profit,
+			"netProfitAud":    taxEvent.Profit * USDAUD,
+			"gainsCgt":        gainsCGT,
+			"gainsCgtAud":     gainsCGT * USDAUD,
+			"gains":           gains,
+			"losses":          losses,
+		},
 	}
 	return c.upsertStockTax(ctx, filter, update)
 }
