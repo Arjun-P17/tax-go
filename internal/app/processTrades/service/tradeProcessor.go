@@ -5,6 +5,7 @@ import (
 
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/internal/utils"
+	"github.com/Arjun-P17/tax-go/pkg/date"
 	pkgutils "github.com/Arjun-P17/tax-go/pkg/utils"
 )
 
@@ -23,11 +24,7 @@ func (s *Service) ProcessTrades(ctx context.Context) error {
 		}
 
 		for _, transaction := range stockTransactions.Transactions {
-			unique := s.processTransaction(ctx, stockPosition, transaction)
-			// No need for the unique check but keeping it for explicitness
-			if !unique {
-				continue
-			}
+			_ = s.processTransaction(ctx, stockPosition, transaction)
 		}
 
 		// Sometimes complete buy and sells dont fully add up to 0 so round it off
@@ -86,9 +83,13 @@ func (s *Service) processSell(ctx context.Context, stockPosition *repository.Sto
 	}
 	stockPosition.Sells = append(stockPosition.Sells, sell)
 
-	// Add tax event
-	// TODO: Get the USD to AUD conversion rate from a service
+	// Try get USDAUD value from currencyPair map otherwise use 1.5
 	USDAUD := 1.5
+	if price, ok := s.currencyMap[date.NewDate(transaction.Date)]; ok {
+		USDAUD = 1 / price
+	}
+
+	// Add tax event
 	taxEvent := repository.TaxEvent{
 		Ticker:       transaction.Ticker,
 		Date:         transaction.Date,

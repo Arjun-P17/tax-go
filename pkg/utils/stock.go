@@ -10,10 +10,12 @@ var splitFactors = map[string]struct {
 	Date   string
 	Factor float64
 }{
-	"AMZN": {"2022-06-06, 00:00:00", 20.0},
-	"SHOP": {"2022-06-29, 00:00:00", 10.0},
-	"TSLA": {"2022-08-25, 00:00:00", 3.0},
+	"AMZN": {"2022-06-03, 00:00:00", 20.0},
+	"SHOP": {"2022-06-28, 00:00:00", 10.0},
+	"TSLA": {"2022-08-24, 00:00:00", 3.0},
 	"PANW": {"2022-09-14, 00:00:00", 3.0},
+	"NVDA": {"2024-06-07, 00:00:00", 10.0},
+	"MSTR": {"2024-08-07, 00:00:00", 10.0},
 }
 
 // getSplitfactor returns the splitfactor for a stock split, if transaction date is before splitdate so we can normalise the transaction values relative to post split

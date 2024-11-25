@@ -8,6 +8,7 @@ import (
 	"github.com/Arjun-P17/tax-go/internal/app/processTrades/service"
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/configmap"
+	"github.com/Arjun-P17/tax-go/pkg/currency"
 	"github.com/Arjun-P17/tax-go/pkg/mongodb"
 )
 
@@ -38,6 +39,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	service := service.NewService(repo)
+	currencyMap, err := currency.GetAUDUSDMap()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	service := service.NewService(repo, currencyMap)
 	service.ProcessTrades(ctx)
 }

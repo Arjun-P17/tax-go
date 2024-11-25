@@ -30,7 +30,7 @@ func ParseTransactions(file *os.File) ([]*repository.Transaction, error) {
 			return nil, err
 		}
 
-		transaction, err := parseTransaction(row)
+		transaction, err := parseIBKRTransaction(row)
 		if err != nil {
 			return nil, err
 		}
@@ -42,8 +42,8 @@ func ParseTransactions(file *os.File) ([]*repository.Transaction, error) {
 	return transactions, nil
 }
 
-// parseTransaction parses a CSV row and creates a Transaction object. Prices are adjusted to reflect current stock splits
-func parseTransaction(row []string) (*repository.Transaction, error) {
+// parseIBKRTransaction parses a CSV row and creates a Transaction object. Prices are adjusted to reflect current stock splits
+func parseIBKRTransaction(row []string) (*repository.Transaction, error) {
 	if len(row) < 4 {
 		fmt.Println("transaction not in correct format continuing")
 		return nil, nil
