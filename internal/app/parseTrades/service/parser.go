@@ -10,6 +10,7 @@ import (
 
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/utils"
+	"github.com/Arjun-P17/tax-go/pkg/utils/slices"
 )
 
 // ParseTransactions reads a CSV file and creates a list of Transaction objects.
@@ -54,7 +55,9 @@ func parseIBKRTransaction(row []string) (*repository.Transaction, error) {
 	key := row[0]
 	order := row[2]
 	asset := row[3]
-	if key != "Trades" || asset != "Stocks" || order != "Order" {
+
+	allowableAssets := []string{"Stocks", "Equity and Index Options"}
+	if key != "Trades" || order != "Order" || !slices.Contains(allowableAssets, asset) {
 		fmt.Println("transaction not in correct format continuing")
 		return nil, nil
 	}

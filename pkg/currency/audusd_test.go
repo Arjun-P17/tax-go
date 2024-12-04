@@ -18,13 +18,13 @@ func TestCreateCurrencyMap(t *testing.T) {
 		{
 			name: "Valid input with sequential dates",
 			rows: [][]string{
-				{"Date", "Price"},      // Header
-				{"01/01/2023", "0.75"}, // Day 1
-				{"02/01/2023", "0.76"}, // Day 2
+				{"Date", "Price"},     // Header
+				{"1/01/2023", "0.75"}, // Day 1
+				{"2/01/2023", "0.76"}, // Day 2
 			},
 			want: map[date.Date]float64{
-				parseDate("01/01/2023", t): 0.75,
-				parseDate("02/01/2023", t): 0.76,
+				parseDate("1/01/2023", t): 0.75,
+				parseDate("2/01/2023", t): 0.76,
 			},
 			wantErr: false,
 		},
@@ -32,15 +32,15 @@ func TestCreateCurrencyMap(t *testing.T) {
 			name: "Valid input with missing dates",
 			rows: [][]string{
 				{"Date", "Price"},      // Header
-				{"01/01/2023", "0.75"}, // Day 1
-				{"05/01/2023", "0.78"}, // Day 5
+				{"11/01/2023", "0.75"}, // Day 1
+				{"15/01/2023", "0.78"}, // Day 5
 			},
 			want: map[date.Date]float64{
-				parseDate("01/01/2023", t): 0.75,
-				parseDate("02/01/2023", t): 0.75,
-				parseDate("03/01/2023", t): 0.75,
-				parseDate("04/01/2023", t): 0.75,
-				parseDate("05/01/2023", t): 0.78,
+				parseDate("11/01/2023", t): 0.75,
+				parseDate("12/01/2023", t): 0.75,
+				parseDate("13/01/2023", t): 0.75,
+				parseDate("14/01/2023", t): 0.75,
+				parseDate("15/01/2023", t): 0.78,
 			},
 			wantErr: false,
 		},
@@ -48,18 +48,18 @@ func TestCreateCurrencyMap(t *testing.T) {
 			name: "Malformed date in rows",
 			rows: [][]string{
 				{"Date", "Price"},       // Header
-				{"01/01/2023", "0.75"},  // Valid row
+				{"1/01/2023", "0.75"},   // Valid row
 				{"InvalidDate", "0.76"}, // Malformed date
-				{"03/01/2023", "0.77"},  // Valid row
+				{"3/01/2023", "0.77"},   // Valid row
 			},
 			wantErr: true,
 		},
 		{
 			name: "Malformed price in rows",
 			rows: [][]string{
-				{"Date", "Price"},              // Header
-				{"01/01/2023", "0.75"},         // Valid row
-				{"02/01/2023", "InvalidPrice"}, // Malformed price
+				{"Date", "Price"},             // Header
+				{"1/01/2023", "0.75"},         // Valid row
+				{"2/01/2023", "InvalidPrice"}, // Malformed price
 			},
 			wantErr: true,
 		},
@@ -92,7 +92,7 @@ func TestCreateCurrencyMap(t *testing.T) {
 
 // Helper function to parse dates and fail tests on errors
 func parseDate(dateStr string, t *testing.T) date.Date {
-	parsedDate, err := time.Parse("02/01/2006", dateStr)
+	parsedDate, err := time.Parse("2/01/2006", dateStr)
 	if err != nil {
 		t.Fatalf("Failed to parse date %q: %v", dateStr, err)
 	}

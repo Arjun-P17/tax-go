@@ -11,6 +11,8 @@ import (
 	"github.com/Arjun-P17/tax-go/pkg/date"
 )
 
+const currencyDateFormat = "2/01/2006"
+
 func GetAUDUSDMap() (map[date.Date]float64, error) {
 	rows, err := readAUDUSDCSV()
 	if err != nil {
@@ -56,7 +58,7 @@ func createCurrencyMap(rows [][]string) (map[date.Date]float64, error) {
 			// Skip header row
 			continue
 		}
-		parsedDate, err := time.Parse("02/01/2006", row[0])
+		parsedDate, err := time.Parse(currencyDateFormat, row[0])
 		if err != nil {
 			errorMsg := fmt.Sprintf("Error parsing date on row %d: %v", i+1, err)
 			fmt.Println(errorMsg)
@@ -78,7 +80,7 @@ func createCurrencyMap(rows [][]string) (map[date.Date]float64, error) {
 		}
 
 		nextRow := rows[i+1]
-		nextDate, err := time.Parse("02/01/2006", nextRow[0])
+		nextDate, err := time.Parse(currencyDateFormat, nextRow[0])
 		if err != nil {
 			errorMsg := fmt.Sprintf("Error parsing date on row %d: %v", i+1, err)
 			fmt.Println(errorMsg)
