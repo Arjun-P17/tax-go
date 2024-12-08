@@ -10,6 +10,8 @@ Please note that this project is currently in development, and efforts are under
 
 Models in the repository layer contain comments with details about the structs and the fields.
 
+AUDUSD data is fetched from https://au.investing.com/currencies/aud-usd-historical-data
+
 ### Usage
 
 - Ensure your local MongoDB server is running and the port is correctly defined in `config.yaml`.
