@@ -30,7 +30,7 @@ func (c *Repository) GetAllStockPositions(ctx context.Context) ([]StockPosition,
 func (c *Repository) GetStockPositionOrDefault(ctx context.Context, ticker string) (*StockPosition, error) {
 	collection := c.GetCollection(c.config.PositionsCollection)
 
-	filter := bson.M{"_id": ticker}
+	filter := bson.M{"ticker": ticker}
 	stockPosition := &StockPosition{}
 	err := collection.FindOne(ctx, filter).Decode(stockPosition)
 	if err == mongo.ErrNoDocuments {

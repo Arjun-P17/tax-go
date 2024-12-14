@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"slices"
+	"sort"
 
 	"github.com/Arjun-P17/tax-go/internal/repository"
 	"github.com/Arjun-P17/tax-go/pkg/configmap"
@@ -16,6 +16,10 @@ var ticker = flag.String("ticker", "", "the ticker to get active trades for")
 
 func main() {
 	flag.Parse()
+	if ticker == nil {
+		log.Fatal("ticker is nil")
+	}
+	fmt.Println("Displaying active buys for ticker:", *ticker)
 
 	ctx := context.Background()
 
@@ -43,20 +47,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if ticker == nil {
-		log.Fatal("ticker is nil")
-	}
-
 	position, err := repo.GetStockPositionOrDefault(ctx, *ticker)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	slices.
-
-
+	// Display the trades
 	buys := position.Buys
-	for _, buy := range buys {
+	sort.Slice(buys, func(i, j int) bool {
+		return buys[i].Date.Before(buys[j].Date)
+	})
 
+	for _, buy := range buys {
+		if buy.QuantityLeft > 0 {
+			displayFmt := "Ticker %s, Buy Date %s, Buy Price %.2f, Quantity %.2f, Quantity Left %.2f"
+			fmt.Println(fmt.Sprintf(displayFmt, buy.Ticker, buy.Date, buy.RealPrice, buy.Quantity, buy.QuantityLeft))
+		}
 	}
 }

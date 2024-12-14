@@ -66,3 +66,30 @@ func TestContainsEmptyValue(t *testing.T) {
 		})
 	}
 }
+
+func TestFilter(t *testing.T) {
+	tests := []struct {
+		name   string
+		slice  []int
+		filter func(int) bool
+		expect []int
+	}{
+		{"Even numbers", []int{1, 2, 3, 4, 5}, func(v int) bool { return v%2 == 0 }, []int{2, 4}},
+		{"Odd numbers", []int{1, 2, 3, 4, 5}, func(v int) bool { return v%2 != 0 }, []int{1, 3, 5}},
+		{"Empty slice", []int{}, func(v int) bool { return v%2 == 0 }, []int{}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Filter(tt.slice, tt.filter)
+			if len(got) != len(tt.expect) {
+				t.Errorf("Filter() = %v, want %v", got, tt.expect)
+			}
+			for i := range got {
+				if got[i] != tt.expect[i] {
+					t.Errorf("Filter() = %v, want %v", got, tt.expect)
+				}
+			}
+		})
+	}
+}
