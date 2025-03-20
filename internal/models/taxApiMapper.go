@@ -10,18 +10,18 @@ import (
 	Tax Mappers (from Model to Proto)
 */
 
-func (te TaxEvent) ToProtoModel() stockpb.TaxEvent {
+func (te TaxableEvent) ToProtoModel() stockpb.TaxEvent {
 	return stockpb.TaxEvent{
 		Date:         &timestamppb.Timestamp{Seconds: te.Date.Unix()},
 		Ticker:       te.Ticker,
 		Profit:       te.Profit,
 		ProfitAud:    te.ProfitAUD,
-		CgtProfit:    te.CGTProfit,
-		CgtProfitAud: te.CGTProfitAUD,
+		CgtProfit:    te.TaxableProfit,
+		CgtProfitAud: te.TaxableProfitAUD,
 	}
 }
 
-func (st StockTax) ToProtoModel() stockpb.StockTax {
+func (st TaxYearSummary) ToProtoModel() stockpb.StockTax {
 	var events []*stockpb.TaxEvent
 	for _, e := range st.Events {
 		protoEvent := e.ToProtoModel()
@@ -30,12 +30,12 @@ func (st StockTax) ToProtoModel() stockpb.StockTax {
 
 	return stockpb.StockTax{
 		FinancialYear:   st.FinancialYear,
-		NetProfitCgt:    st.NetProfitCGT,
-		NetProfitCgtAud: st.NetProfitCGTAUD,
+		NetProfitCgt:    st.NetTaxableProfit,
+		NetProfitCgtAud: st.NetTaxableProfitAUD,
 		NetProfit:       st.NetProfit,
 		NetProfitAud:    st.NetProfitAUD,
-		GainsCgt:        st.GainsCGT,
-		GainsCgtAud:     st.GainsCGTAUD,
+		GainsCgt:        st.TaxableGains,
+		GainsCgtAud:     st.TaxableGainsAUD,
 		Gains:           st.Gains,
 		Losses:          st.Losses,
 		Events:          events,

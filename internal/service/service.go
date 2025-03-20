@@ -8,7 +8,7 @@ import (
 )
 
 type serviceInterface interface {
-	GetStockPositions(ctx context.Context) ([]models.StockPosition, error)
+	GetStockPositions(ctx context.Context) ([]models.PortfolioPosition, error)
 }
 
 type repositoryInterface interface {

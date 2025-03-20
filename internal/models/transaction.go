@@ -2,69 +2,69 @@ package models
 
 import "time"
 
-type TransactionType string
+type TradeType string
 
 var (
-	Buytype  TransactionType = "BUY"
-	Selltype TransactionType = "SELL"
+	Buytype  TradeType = "BUY"
+	Selltype TradeType = "SELL"
 )
 
-type TaxMethod string
+type TaxCalculationMethod string
 
 var (
-	FIFO    TaxMethod = "FIFO"
-	LIFO    TaxMethod = "LIFO"
-	MaxLoss TaxMethod = "MAX_LOSS"
-	MinGain TaxMethod = "MIN_GAIN"
-	MinCGT  TaxMethod = "MIN_CGT"
+	FIFO    TaxCalculationMethod = "FIFO"
+	LIFO    TaxCalculationMethod = "LIFO"
+	MaxLoss TaxCalculationMethod = "MAX_LOSS"
+	MinGain TaxCalculationMethod = "MIN_GAIN"
+	MinCGT  TaxCalculationMethod = "MIN_CGT"
 )
 
-type Transaction struct {
-	ID           string
+type StockTransactions struct {
 	Ticker       string
-	Currency     string
-	Date         time.Time
-	Type         TransactionType
-	Quantity     float64
-	TradePrice   float64
-	RealPrice    float64
-	Proceeds     float64
-	BrokerageFee float64
-	Basis        float64
-	BrokerProfit float64
-	USDAUD       float64
-	Splitfactor  float64
+	Transactions []TradeTransaction
 }
 
-type Sell struct {
-	Transaction
-	TaxMethod TaxMethod
-	Profit    float64
-	CGTProfit float64
-	BuysSold  []BuySold
+type TradeTransaction struct {
+	ID             string
+	Ticker         string
+	Currency       string
+	Date           time.Time
+	Type           TradeType
+	Quantity       float64
+	ExecutionPrice float64
+	RealPrice      float64
+	Proceeds       float64
+	Commission     float64
+	Basis          float64
+	BrokerProfit   float64
+	USDAUD         float64
+	Splitfactor    float64
 }
 
-type BuySold struct {
+type SellTransaction struct {
+	TradeTransaction
+	TaxCalcMethod    TaxCalculationMethod
+	Profit           float64
+	TaxableProfit    float64
+	MatchedPurchases []MatchedPurchase
+}
+
+type MatchedPurchase struct {
 	BuyID    string
 	Quantity float64
 }
 
-type Buy struct {
-	Transaction
+type BuyTransaction struct {
+	TradeTransaction
 	QuantityLeft float64
 }
 
-type StockTransactions struct {
-	Ticker       string
-	Transactions []Transaction
-}
-
-type StockPosition struct {
-	Ticker     string
-	Quantity   float64
-	NetSpend   float64
-	SoldProfit float64
-	CGTProfit  float64
-	Buys       []Buy
-	Sells      []Sell
+type PortfolioPosition struct {
+	Ticker        string
+	Quantity      float64
+	NetSpend      float64
+	SoldProfit    float64
+	TaxableProfit float64
+	Buys          []BuyTransaction
+	Sells         []SellTransaction
 }

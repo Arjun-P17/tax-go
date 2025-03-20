@@ -9,7 +9,7 @@ import (
 	Transaction Mappers (from model to proto)
 */
 
-func (tt TransactionType) ToProtoModel() stockpb.TransactionType {
+func (tt TradeType) ToProtoModel() stockpb.TransactionType {
 	switch tt {
 	case Buytype:
 		return stockpb.TransactionType_BUY
@@ -20,7 +20,7 @@ func (tt TransactionType) ToProtoModel() stockpb.TransactionType {
 	}
 }
 
-func (tm TaxMethod) ToProtoModel() stockpb.TaxMethod {
+func (tm TaxCalculationMethod) ToProtoModel() stockpb.TaxMethod {
 	switch tm {
 	case FIFO:
 		return stockpb.TaxMethod_FIFO
@@ -37,7 +37,7 @@ func (tm TaxMethod) ToProtoModel() stockpb.TaxMethod {
 	}
 }
 
-func (t Transaction) ToProtoModel() stockpb.Transaction {
+func (t TradeTransaction) ToProtoModel() stockpb.Transaction {
 	return stockpb.Transaction{
 		Id:           t.ID,
 		Ticker:       t.Ticker,
@@ -45,10 +45,10 @@ func (t Transaction) ToProtoModel() stockpb.Transaction {
 		Date:         &timestamppb.Timestamp{Seconds: t.Date.Unix()},
 		Type:         t.Type.ToProtoModel(),
 		Quantity:     t.Quantity,
-		TradePrice:   t.TradePrice,
+		TradePrice:   t.ExecutionPrice,
 		RealPrice:    t.RealPrice,
 		Proceeds:     t.Proceeds,
-		BrokerageFee: t.BrokerageFee,
+		BrokerageFee: t.Commission,
 		Basis:        t.Basis,
 		BrokerProfit: t.BrokerProfit,
 		UsdAud:       t.USDAUD,
@@ -56,32 +56,32 @@ func (t Transaction) ToProtoModel() stockpb.Transaction {
 	}
 }
 
-func (bs BuySold) ToProtoModel() stockpb.BuySold {
+func (bs MatchedPurchase) ToProtoModel() stockpb.BuySold {
 	return stockpb.BuySold{
 		BuyId:    bs.BuyID,
 		Quantity: bs.Quantity,
 	}
 }
 
-func (s Sell) ToProtoModel() stockpb.Sell {
+func (s SellTransaction) ToProtoModel() stockpb.Sell {
 	var buysSoldProto []*stockpb.BuySold
-	for _, repoBuySold := range s.BuysSold {
+	for _, repoBuySold := range s.MatchedPurchases {
 		bs := repoBuySold.ToProtoModel()
 		buysSoldProto = append(buysSoldProto, &bs)
 	}
 
-	t := s.Transaction.ToProtoModel()
+	t := s.TradeTransaction.ToProtoModel()
 	return stockpb.Sell{
 		Transaction: &t,
-		TaxMethod:   s.TaxMethod.ToProtoModel(),
+		TaxMethod:   s.TaxCalcMethod.ToProtoModel(),
 		Profit:      s.Profit,
-		CgtProfit:   s.CGTProfit,
+		CgtProfit:   s.TaxableProfit,
 		BuysSold:    buysSoldProto,
 	}
 }
 
-func (b Buy) ToProtoModel() stockpb.Buy {
-	t := b.Transaction.ToProtoModel()
+func (b BuyTransaction) ToProtoModel() stockpb.Buy {
+	t := b.TradeTransaction.ToProtoModel()
 	return stockpb.Buy{
 		Transaction:  &t,
 		QuantityLeft: b.QuantityLeft,
@@ -92,7 +92,7 @@ func (b Buy) ToProtoModel() stockpb.Buy {
 	Portfolio Mappers (from Model to Proto)
 */
 
-func (sp StockPosition) ToProtoModel() stockpb.StockPosition {
+func (sp PortfolioPosition) ToProtoModel() stockpb.StockPosition {
 	var buys []*stockpb.Buy
 	for _, repoBuy := range sp.Buys {
 		t := repoBuy.ToProtoModel()
@@ -110,7 +110,7 @@ func (sp StockPosition) ToProtoModel() stockpb.StockPosition {
 		Quantity:   sp.Quantity,
 		NetSpend:   sp.NetSpend,
 		SoldProfit: sp.SoldProfit,
-		CgtProfit:  sp.CGTProfit,
+		CgtProfit:  sp.TaxableProfit,
 		Buys:       buys,
 		Sells:      sells,
 	}
